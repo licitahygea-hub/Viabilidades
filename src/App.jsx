@@ -5,6 +5,7 @@ import {
 } from './components/icons'
 import { useProcesses, useHashRoute } from './lib/store'
 import { compute } from './lib/calc'
+import { patchProcesso } from './lib/comite'
 import { Sheet, Status } from './components/ui'
 import Home from './screens/Home'
 import Painel from './screens/Painel'
@@ -48,7 +49,15 @@ export default function App() {
   const set = (fn) => store.update(proc.id, fn)
   const api = {
     set,
-    setProcesso: (k, v) => set((p) => ({ ...p, processo: { ...p.processo, [k]: v } })),
+    // edição manual: aplica regras (data do comitê) e remove a indicação de fonte automática
+    setProcesso: (k, v) =>
+      set((p) => {
+        const fontes = { ...p.fontes }
+        delete fontes[k]
+        return { ...p, processo: patchProcesso(p.processo, { [k]: v }), fontes }
+      }),
+    patchProcesso: (patch, fontes = {}) => set((p) => ({ ...p, processo: patchProcesso(p.processo, patch), fontes: { ...p.fontes, ...fontes } })),
+    patch: (p, patch) => ({ ...p, processo: patchProcesso(p.processo, patch) }),
     setPremissa: (k, v) => set((p) => ({ ...p, premissas: { ...p.premissas, [k]: v } })),
     setField: (k, v) => set((p) => ({ ...p, [k]: v })),
     listAdd: (list, item) => set((p) => ({ ...p, [list]: [...p[list], item] })),

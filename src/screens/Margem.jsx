@@ -3,6 +3,7 @@ import { newItem } from '../lib/model'
 import { money, pct, num, toEditText } from '../lib/format'
 import { Field } from '../components/fields'
 import { Panel, PageHead, Status, Empty } from '../components/ui'
+import EnviarPrecificacao from '../components/EnviarPrecificacao'
 
 export default function Margem({ p, c, api }) {
   const L = c.limites
@@ -122,6 +123,7 @@ export default function Margem({ p, c, api }) {
           </table>
         </div>
       </Panel>
+      <EnviarPrecificacao p={p} c={c} api={api} />
     </div>
   )
 }

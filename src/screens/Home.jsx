@@ -1,14 +1,17 @@
 import { useMemo, useRef, useState } from 'react'
-import { Plus, Upload, Download, Copy, Trash2, Search } from '../components/icons'
+import { Plus, Upload, Download, Copy, Trash2, Search, SlidersHorizontal } from '../components/icons'
 import { newProcess, duplicate } from '../lib/model'
 import { compute } from '../lib/calc'
 import { money0, pct, fmtDate } from '../lib/format'
 import { downloadJSON, slug } from '../lib/store'
-import { Status, Empty } from '../components/ui'
+import { Status, Empty, Sheet } from '../components/ui'
+import { deleteDocsOf } from '../lib/docs'
+import { loadConfig, saveConfig } from '../lib/config'
 
 export default function Home({ store, go, missing }) {
   const fileRef = useRef(null)
   const [q, setQ] = useState('')
+  const [cfgOpen, setCfgOpen] = useState(false)
   const [msg, setMsg] = useState(missing ? 'Essa viabilidade não existe neste navegador. Importe o backup para abri-la.' : '')
 
   const rows = useMemo(
@@ -71,6 +74,9 @@ export default function Home({ store, go, missing }) {
               <Download size={18} /> Exportar tudo
             </button>
           )}
+          <button className="btn" onClick={() => setCfgOpen(true)}>
+            <SlidersHorizontal size={18} /> Configurações
+          </button>
           <input ref={fileRef} type="file" accept="application/json,.json" hidden onChange={onImport} />
         </div>
       </header>
@@ -131,7 +137,7 @@ export default function Home({ store, go, missing }) {
                   title="Excluir"
                   aria-label="Excluir"
                   onClick={() => {
-                    if (window.confirm(`Excluir "${p.processo.descritivo || 'Viabilidade sem descritivo'}"? Esta ação não pode ser desfeita.`)) store.remove(p.id)
+                    if (window.confirm(`Excluir "${p.processo.descritivo || 'Viabilidade sem descritivo'}"? Esta ação não pode ser desfeita.`)) { store.remove(p.id); deleteDocsOf(p.id).catch(() => {}) }
                   }}
                 >
                   <Trash2 size={18} />
@@ -142,7 +148,43 @@ export default function Home({ store, go, missing }) {
         </ul>
       )}
 
+      {cfgOpen && <Configuracoes onClose={() => setCfgOpen(false)} />}
       <p className="home-foot">Os dados ficam salvos apenas neste navegador e dispositivo. Use “Exportar tudo” para guardar um backup ou levar para outro aparelho.</p>
     </div>
+  )
+}
+
+function Configuracoes({ onClose }) {
+  const [cfg, setCfg] = useState(loadConfig)
+  const [salvo, setSalvo] = useState(false)
+  const set = (k) => (e) => {
+    setSalvo(false)
+    setCfg((c) => ({ ...c, [k]: e.target.value }))
+  }
+  return (
+    <Sheet open onClose={onClose} title="Configurações">
+      <form
+        className="stack"
+        onSubmit={(e) => {
+          e.preventDefault()
+          saveConfig({ ...cfg, chaveAcesso: cfg.chaveAcesso.trim(), emailPrecificacao: cfg.emailPrecificacao.trim() })
+          setSalvo(true)
+        }}
+      >
+        <div className="field">
+          <label htmlFor="cfg-chave">Chave de acesso às funções de IA</label>
+          <input id="cfg-chave" type="password" autoComplete="off" value={cfg.chaveAcesso} onChange={set('chaveAcesso')} />
+          <small className="hint">A mesma definida em APP_ACCESS_KEY na Vercel. Fica salva só neste aparelho.</small>
+        </div>
+        <div className="field">
+          <label htmlFor="cfg-email">E-mail da precificação</label>
+          <input id="cfg-email" type="email" value={cfg.emailPrecificacao} onChange={set('emailPrecificacao')} />
+        </div>
+        <div className="row-actions">
+          <button className="btn btn-primary" type="submit">Salvar</button>
+          {salvo && <Status kind="ok">Salvo</Status>}
+        </div>
+      </form>
+    </Sheet>
   )
 }

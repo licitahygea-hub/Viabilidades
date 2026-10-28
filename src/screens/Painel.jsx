@@ -1,6 +1,7 @@
 import { money, money0, pct, pctSigned, fmtDate } from '../lib/format'
 import { Panel, Stat, Status, KV } from '../components/ui'
 import { Composition, MarginRuler } from '../components/charts'
+import EditalDocs from '../components/EditalDocs'
 
 export default function Painel({ p, c, api }) {
   const P = p.processo
@@ -38,6 +39,8 @@ export default function Painel({ p, c, api }) {
         </ul>
       </div>
 
+      <EditalDocs p={p} api={api} />
+
       <section className={`verdict verdict-${v.kind}`} aria-live="polite">
         <div className="verdict-top">
           <div>
@@ -59,7 +62,7 @@ export default function Painel({ p, c, api }) {
         <Stat label="Faturamento mensal" value={money0(c.fatMensal)} note={`Estimado do edital: ${money0(c.estMensal)}`} />
         <Stat label="Valor global (vigência)" value={money0(L.nossoGlobal)} note={`Estimado global: ${money0(c.estGlobal)}`} />
         <Stat label="Resultado mensal (taxa adm.)" value={money0(c.resMensal)} note={`Na vigência: ${money0(c.resMensal * c.vig)}`} tone={active ? (c.resMensal < 0 ? 'bad' : null) : null} />
-        <Stat label="Desconto ofertado" value={c.estMensal ? pct(L.nossoDesconto ?? 0, 2) : '—'} note="Nosso preço vs. edital" />
+        <Stat label="Desconto ofertado" value={c.estMensal && c.fatMensal ? pct(L.nossoDesconto ?? 0, 2) : '—'} note="Nosso preço vs. edital" />
       </div>
 
       <Panel title="Limites para a disputa" subtitle="Considera o mesmo desconto aplicado em todos os itens">

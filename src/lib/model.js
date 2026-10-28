@@ -42,7 +42,12 @@ export function newProcess() {
       statusPesquisa: 'Pendente',
       statusComite: 'Pendente',
       decisao: 'Pendente',
+      especialidades: [],
+      comiteAuto: true,
     },
+    fontes: {},
+    extracao: null,
+    buscaEmpresa: null,
     premissas: { ...DEFAULT_PREMISSAS },
     tr: [newTrItem()],
     trObs: '',
@@ -59,7 +64,8 @@ export function normalize(p) {
   return {
     ...base,
     ...p,
-    processo: { ...base.processo, ...(p.processo || {}) },
+    processo: { ...base.processo, ...(p.processo || {}), especialidades: (p.processo?.especialidades || []).map((e) => ({ id: uid(), modalidade: 'RQE', ...e })) },
+    fontes: { ...(p.fontes || {}) },
     premissas: { ...base.premissas, ...(p.premissas || {}) },
     indiretos: { ...base.indiretos, ...(p.indiretos || {}) },
     simulador: { ...base.simulador, ...(p.simulador || {}) },
@@ -85,10 +91,13 @@ export function duplicate(p) {
 // Campos da aba Processo, agrupados por seção
 export const PROCESSO_SECTIONS = [
   {
+    id: 'identificacao',
     title: 'Identificação',
     fields: [
       { key: 'descritivo', label: 'Descritivo', hint: 'Cidade UF - PE nn aaaa - Abertura dd mm aaaa', type: 'text', wide: true },
       { key: 'municipio', label: 'Município/UF', type: 'text' },
+      { key: 'orgao', label: 'Órgão contratante', type: 'text' },
+      { key: 'orgaoCnpj', label: 'CNPJ do órgão', type: 'text' },
       { key: 'capital', label: 'Capital do estado', type: 'text' },
       { key: 'distancia', label: 'Distância da capital (km)', type: 'int' },
       { key: 'habitantes', label: 'Nº de habitantes', type: 'int' },
@@ -96,6 +105,7 @@ export const PROCESSO_SECTIONS = [
       { key: 'empresa', label: 'Empresa participante', type: 'select', list: 'Empresa' },
       { key: 'modalidade', label: 'Modalidade', type: 'select', list: 'Modalidade' },
       { key: 'numeroEdital', label: 'Nº do edital / processo', type: 'text' },
+      { key: 'linkProcesso', label: 'Link do processo (PNCP / portal)', type: 'url' },
       { key: 'dataSessao', label: 'Data da sessão', type: 'date' },
       { key: 'horaSessao', label: 'Horário da sessão', type: 'time' },
       { key: 'tipoLicitacao', label: 'Tipo de licitação (critério)', type: 'select', list: 'TipoLicitacao' },
@@ -109,6 +119,7 @@ export const PROCESSO_SECTIONS = [
     ],
   },
   {
+    id: 'valores',
     title: 'Valores e prazos',
     fields: [
       { key: 'estimadoGlobal', label: 'Valor estimado global', type: 'money' },
@@ -119,6 +130,7 @@ export const PROCESSO_SECTIONS = [
     ],
   },
   {
+    id: 'regras',
     title: 'Regras do edital',
     fields: [
       { key: 'garantiaProposta', label: 'Exige garantia de proposta?', type: 'select', list: 'SimNao' },
@@ -136,6 +148,7 @@ export const PROCESSO_SECTIONS = [
     ],
   },
   {
+    id: 'equipe',
     title: 'Equipe técnica',
     fields: [
       { key: 'descritivoEquipe', label: 'Descritivo da equipe técnica', type: 'textarea', wide: true },
@@ -147,6 +160,7 @@ export const PROCESSO_SECTIONS = [
     ],
   },
   {
+    id: 'empresa',
     title: 'Empresa atual (contrato vigente)',
     fields: [
       { key: 'atualIdentificada', label: 'Empresa atual identificada?', type: 'select', list: 'SimNao' },
@@ -164,6 +178,7 @@ export const PROCESSO_SECTIONS = [
     ],
   },
   {
+    id: 'pesquisa',
     title: 'Pesquisa de preço (valores a pagar)',
     fields: [
       { key: 'pesquisaResponsavel', label: 'Responsável pela informação', type: 'text' },
@@ -174,6 +189,7 @@ export const PROCESSO_SECTIONS = [
     ],
   },
   {
+    id: 'comite',
     title: 'Comitê de precificação',
     fields: [
       { key: 'comiteDataPrevista', label: 'Data prevista', type: 'date' },
@@ -185,6 +201,7 @@ export const PROCESSO_SECTIONS = [
     ],
   },
   {
+    id: 'extras',
     title: 'Dados extras',
     fields: [{ key: 'extras', label: 'Anotações livres', type: 'textarea', wide: true }],
   },

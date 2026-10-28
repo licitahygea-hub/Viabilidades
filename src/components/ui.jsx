@@ -49,27 +49,55 @@ export function Stat({ label, value, note, tone }) {
   )
 }
 
-export function Sheet({ open, onClose, title, children }) {
+export function Sheet({ open, onClose, title, children, size, footer }) {
   useEffect(() => {
     if (!open) return
     const onKey = (e) => e.key === 'Escape' && onClose()
     document.addEventListener('keydown', onKey)
-    return () => document.removeEventListener('keydown', onKey)
+    const prev = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+    return () => {
+      document.removeEventListener('keydown', onKey)
+      document.body.style.overflow = prev
+    }
   }, [open, onClose])
   if (!open) return null
   return (
-    <div className="sheet-backdrop" onClick={onClose}>
-      <div className="sheet" role="dialog" aria-modal="true" aria-label={title} onClick={(e) => e.stopPropagation()}>
+    <div className={`sheet-backdrop${size ? ' sheet-' + size + '-wrap' : ''}`} onClick={onClose}>
+      <div className={`sheet${size ? ' sheet-' + size : ''}`} role="dialog" aria-modal="true" aria-label={title} onClick={(e) => e.stopPropagation()}>
         <div className="sheet-head">
           <h2>{title}</h2>
           <button className="icon-btn" onClick={onClose} aria-label="Fechar">
             <X size={20} />
           </button>
         </div>
-        {children}
+        <div className="sheet-body">{children}</div>
+        {footer && <div className="sheet-foot">{footer}</div>}
       </div>
     </div>
   )
+}
+
+// Indicação de onde veio um valor preenchido automaticamente
+export function FonteTag({ fonte, onClick }) {
+  if (!fonte) return null
+  let txt
+  if (fonte.url) txt = 'Fonte: ' + (fonte.titulo || hostOf(fonte.url))
+  else if (fonte.origem === 'conhecimento') txt = 'Estimativa da IA (fora do edital) — confirme'
+  else txt = `Fonte: ${fonte.arquivo || 'documento'}${fonte.pagina ? `, p. ${fonte.pagina}` : ''}`
+  return (
+    <button type="button" className={`fonte-tag${fonte.origem === 'conhecimento' ? ' is-estimate' : ''}`} onClick={onClick} title={fonte.trecho || ''}>
+      {txt}
+    </button>
+  )
+}
+
+export const hostOf = (u) => {
+  try {
+    return new URL(u).hostname.replace(/^www\./, '')
+  } catch {
+    return u
+  }
 }
 
 export function Empty({ title, children, action }) {

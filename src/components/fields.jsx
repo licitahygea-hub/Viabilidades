@@ -1,6 +1,7 @@
 import { useEffect, useId, useState } from 'react'
 import { parseBR, toEditText } from '../lib/format'
 import { LISTS } from '../lib/lists'
+import { FonteTag } from './ui'
 
 // Campo numérico com digitação em pt-BR (vírgula decimal)
 export function NumInput({ value, onChange, kind = 'number', decimals, placeholder, id, ariaLabel }) {
@@ -58,7 +59,7 @@ export function Select({ value, onChange, list, options, id, ariaLabel, placehol
 }
 
 // Campo genérico com rótulo
-export function Field({ label, hint, type = 'text', value, onChange, list, wide, computed, placeholder, decimals }) {
+export function Field({ label, hint, type = 'text', value, onChange, list, wide, computed, placeholder, decimals, fonte, onFonte }) {
   const id = useId()
   let control
   if (type === 'computed') {
@@ -81,10 +82,11 @@ export function Field({ label, hint, type = 'text', value, onChange, list, wide,
     )
   }
   return (
-    <div className={`field${wide ? ' wide' : ''}${type === 'computed' ? ' is-computed' : ''}`}>
+    <div className={`field${wide ? ' wide' : ''}${type === 'computed' ? ' is-computed' : ''}${fonte ? ' has-fonte' : ''}`}>
       <label htmlFor={id}>{label}</label>
       {control}
       {hint && <small className="hint">{hint}</small>}
+      {fonte && <FonteTag fonte={fonte} onClick={onFonte} />}
     </div>
   )
 }
