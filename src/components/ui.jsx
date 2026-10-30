@@ -83,7 +83,8 @@ export function FonteTag({ fonte, onClick }) {
   if (!fonte) return null
   let txt
   if (fonte.url) txt = 'Fonte: ' + (fonte.titulo || hostOf(fonte.url))
-  else if (fonte.origem === 'conhecimento') txt = 'Estimativa da IA (fora do edital) — confirme'
+  else if (fonte.origem === 'derivado') txt = fonte.trecho || 'Calculado'
+  else if (fonte.origem === 'conhecimento') txt = 'Estimativa (fora do edital) — confirme'
   else txt = `Fonte: ${fonte.arquivo || 'documento'}${fonte.pagina ? `, p. ${fonte.pagina}` : ''}`
   return (
     <button type="button" className={`fonte-tag${fonte.origem === 'conhecimento' ? ' is-estimate' : ''}`} onClick={onClick} title={fonte.trecho || ''}>

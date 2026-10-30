@@ -19,5 +19,4 @@ async function enviar({ para, assunto, texto }) {
 }
 
 const fn = (body) => enviar(body)
-fn.needsClaude = false
 export default handler(fn)

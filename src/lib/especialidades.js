@@ -60,7 +60,13 @@ export function matchEspecialidade(nome, cat = catalogo()) {
   if (exact) return exact.nome
   const contains = cat.find((c) => n.includes(norm(c.nome)) || norm(c.nome).includes(n))
   if (contains) return contains.nome
-  const alias = {
+  for (const [k, v] of Object.entries(ALIAS)) if (n.includes(k)) return v
+  return null
+}
+
+// Termos usados nos editais para cada especialidade (sem acentos, minúsculas)
+export const ALIAS = {
+
     'clinico geral': 'Clínica Médica', 'clinica geral': 'Clínica Médica', clinico: 'Clínica Médica',
     pediatra: 'Pediatria', ortopedista: 'Ortopedia e Traumatologia', ortopedia: 'Ortopedia e Traumatologia',
     ginecologista: 'Ginecologia e Obstetrícia', obstetra: 'Ginecologia e Obstetrícia', gineco: 'Ginecologia e Obstetrícia',
@@ -74,6 +80,3 @@ export function matchEspecialidade(nome, cat = catalogo()) {
     infectologista: 'Infectologia', nefrologista: 'Nefrologia', pneumologista: 'Pneumologia', reumatologista: 'Reumatologia',
     mastologista: 'Mastologia', neurocirurgiao: 'Neurocirurgia', 'medico do trabalho': 'Medicina do Trabalho',
   }
-  for (const [k, v] of Object.entries(alias)) if (n.includes(k)) return v
-  return null
-}

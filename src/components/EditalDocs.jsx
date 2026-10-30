@@ -2,11 +2,10 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { Panel, Sheet, Status, FonteTag } from './ui'
 import { Upload, Trash2, FileText, Check } from './icons'
 import FonteSheet from './FonteSheet'
-import { ACCEPT, addFiles, listDocs, deleteDoc, extractText, docStats, buildPayload, openDoc, fmtSize } from '../lib/docs'
-import { callApi } from '../lib/config'
-import { PROCESSO_SECTIONS, newTrItem } from '../lib/model'
+import { ACCEPT, addFiles, listDocs, deleteDoc, extractText, docStats, openDoc, fmtSize } from '../lib/docs'
+import { extrairEdital } from '../lib/extrator'
+import { PROCESSO_SECTIONS, newTrItem, campoDef } from '../lib/model'
 import { LISTS } from '../lib/lists'
-import { campoDef } from '../../shared/campos-edital.js'
 import { matchEspecialidade, catalogo, loadCustom, saveCustom, norm, MODALIDADES_ESP } from '../lib/especialidades'
 import { money, fmtDate, num } from '../lib/format'
 
@@ -18,7 +17,7 @@ function vazio(key, v) {
   return false
 }
 
-// Converte o valor vindo da IA para o formato do campo
+// Converte o valor encontrado no documento para o formato do campo
 function converter(key, v) {
   const f = campoDef(key)
   if (!f || v === null || v === undefined || v === '') return undefined
@@ -59,20 +58,12 @@ export default function EditalDocs({ p, api }) {
   const [aviso, setAviso] = useState('')
   const [review, setReview] = useState(false)
   const [drag, setDrag] = useState(false)
-  const [elapsed, setElapsed] = useState(0)
   const inputRef = useRef(null)
 
   const refresh = useCallback(() => listDocs(p.id).then(setDocs).catch(() => setErro('Este navegador não permite guardar arquivos (modo privado?).')), [p.id])
   useEffect(() => {
     refresh()
   }, [refresh])
-
-  useEffect(() => {
-    if (!busy?.ia) return
-    const t0 = Date.now()
-    const t = setInterval(() => setElapsed(Math.round((Date.now() - t0) / 1000)), 1000)
-    return () => clearInterval(t)
-  }, [busy?.ia])
 
   const onFiles = async (files) => {
     if (!files?.length) return
@@ -100,16 +91,15 @@ export default function EditalDocs({ p, api }) {
         prontos.push(await extractText(docs[i]))
       }
       setDocs(prontos)
-      const payload = await buildPayload(prontos)
-      const avisos = []
-      if (payload.truncado) avisos.push('Os documentos são muito longos; parte final não foi enviada à análise.')
       const digit = prontos.filter((d) => docStats(d)?.digitalizado)
-      if (digit.length) avisos.push(`${digit.map((d) => d.nome).join(', ')} parece(m) digitalizado(s) (imagem, sem texto). ${payload.pdfs.length ? 'Um deles foi enviado como imagem para leitura.' : 'Envie uma versão pesquisável ou um arquivo de até 3 MB.'}`)
-      setAviso(avisos.join(' '))
-      setBusy({ etapa: 'Analisando o edital com IA…', ia: true })
-      setElapsed(0)
-      const hoje = new Date().toISOString().slice(0, 10)
-      const res = await callApi('/api/extrair-edital', { ...payload, hoje })
+      if (digit.length) setAviso(`${digit.map((d) => d.nome).join(', ')} parece(m) digitalizado(s) (imagem, sem texto) e não pôde(puderam) ser lido(s). Use a versão pesquisável do PDF.`)
+      setBusy({ etapa: 'Procurando os dados do Processo nos documentos…' })
+      await new Promise((r) => setTimeout(r, 30))
+      const res = extrairEdital(prontos)
+      if (!Object.keys(res.campos).length && !res.especialidades.length) {
+        setErro('Nenhum dado do Processo foi encontrado no texto dos documentos.')
+        return
+      }
       api.setField('extracao', { data: new Date().toISOString(), arquivos: prontos.map((d) => d.nome), resultado: res })
       setReview(true)
     } catch (e) {
@@ -130,7 +120,7 @@ export default function EditalDocs({ p, api }) {
   return (
     <Panel
       title="Edital e anexos"
-      subtitle="Anexe o edital, o TR e os demais anexos. A IA lê os documentos, preenche a aba Processo e indica a página de onde tirou cada dado."
+      subtitle="Anexe o edital, o TR e os demais anexos. O sistema lê o texto dos documentos, preenche a aba Processo e indica a página de onde tirou cada dado."
       className={`docs-panel${drag ? ' is-drag' : ''}`}
     >
       <div
@@ -197,7 +187,6 @@ export default function EditalDocs({ p, api }) {
           <span className="spinner" aria-hidden="true" />
           <span>
             {busy.etapa}
-            {busy.ia ? ` ${elapsed}s` : ''}
           </span>
         </div>
       )}
@@ -321,11 +310,10 @@ function Revisao({ p, api, ext, onClose }) {
         </p>
         {r.observacoes && (
           <div className="callout">
-            <strong>Pontos de atenção</strong>
+            <strong>Observações da leitura</strong>
             <p>{r.observacoes}</p>
           </div>
         )}
-        {r.truncado && <p className="small warn-text">A resposta da IA foi cortada por tamanho; alguns campos podem faltar.</p>}
 
         <div className="rv-list">
           {linhas.map((l) => {

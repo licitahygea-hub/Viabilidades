@@ -22,8 +22,10 @@ export default function FonteSheet({ procId, info, onClose }) {
 
   return (
     <Sheet open onClose={onClose} title={label}>
-      {fonte.origem === 'conhecimento' && !fonte.url ? (
-        <p>Este valor não consta nos documentos. Foi estimado pela IA a partir de conhecimento geral e deve ser confirmado.</p>
+      {fonte.origem === 'derivado' ? (
+        <p>{fonte.trecho || 'Valor calculado'}: obtido a partir de outro campo, não de um trecho do edital.</p>
+      ) : fonte.origem === 'conhecimento' && !fonte.url ? (
+        <p>Este valor não consta nos documentos e deve ser confirmado.</p>
       ) : fonte.url ? (
         <div className="fonte-box">
           <p className="small muted">Encontrado na web</p>

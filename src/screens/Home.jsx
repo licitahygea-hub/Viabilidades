@@ -172,9 +172,9 @@ function Configuracoes({ onClose }) {
         }}
       >
         <div className="field">
-          <label htmlFor="cfg-chave">Chave de acesso às funções de IA</label>
+          <label htmlFor="cfg-chave">Chave de acesso às funções do servidor</label>
           <input id="cfg-chave" type="password" autoComplete="off" value={cfg.chaveAcesso} onChange={set('chaveAcesso')} />
-          <small className="hint">A mesma definida em APP_ACCESS_KEY na Vercel. Fica salva só neste aparelho.</small>
+          <small className="hint">Só é necessária se você definir APP_ACCESS_KEY na Vercel. Fica salva só neste aparelho.</small>
         </div>
         <div className="field">
           <label htmlFor="cfg-email">E-mail da precificação</label>

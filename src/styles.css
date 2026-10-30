@@ -538,3 +538,9 @@ blockquote { margin: 0; padding: 10px 14px; border-left: 3px solid var(--accent)
 .email-preview { display: grid; gap: 2px; padding: 12px 14px; border-radius: var(--radius); background: var(--surface-2); margin-bottom: 12px; }
 .email-preview p + p.small { margin-top: 8px; }
 .email-preview pre { margin: 0; font-family: inherit; font-size: 14px; white-space: pre-wrap; overflow-wrap: anywhere; }
+
+.manual-links { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 8px; }
+.chip-link { padding: 4px 10px; border: 1px solid var(--line-strong); border-radius: 999px; font-size: 13px; font-weight: 500; text-decoration: none; color: var(--ink-2); background: var(--surface); }
+.chip-link:hover { border-color: var(--accent); color: var(--accent); }
+.esp, .sub-block, .empresa-busca { grid-template-columns: minmax(0, 1fr); min-width: 0; }
+.esp-box, .esp-trigger { min-width: 0; }

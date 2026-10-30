@@ -206,3 +206,6 @@ export const PROCESSO_SECTIONS = [
     fields: [{ key: 'extras', label: 'Anotações livres', type: 'textarea', wide: true }],
   },
 ]
+
+const CAMPOS = Object.fromEntries(PROCESSO_SECTIONS.flatMap((s) => s.fields).map((f) => [f.key, f]))
+export const campoDef = (key) => CAMPOS[key]

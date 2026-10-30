@@ -172,44 +172,4 @@ export function openDoc(doc, pagina) {
   setTimeout(() => URL.revokeObjectURL(url), 60_000)
 }
 
-const LIMITE_CHARS = 900_000 // ~ 250 mil tokens; mantém o pedido abaixo do limite de 4,5 MB da Vercel
-const LIMITE_PDF_B64 = 3_000_000 // PDF digitalizado (sem texto) enviado como arquivo, se couber
-
-// Monta o pacote enviado à função /api/extrair-edital
-export async function buildPayload(docs) {
-  const textos = []
-  const pdfs = []
-  let total = 0
-  let truncado = false
-  for (const d of docs) {
-    const st = docStats(d)
-    if (st?.digitalizado) {
-      if (d.tamanho <= LIMITE_PDF_B64 && !pdfs.length) {
-        pdfs.push({ nome: d.nome, base64: await blobToBase64(d.blob) })
-      }
-      continue
-    }
-    const paginas = []
-    for (const p of d.paginas || []) {
-      if (total + p.texto.length > LIMITE_CHARS) {
-        truncado = true
-        break
-      }
-      total += p.texto.length
-      paginas.push(p)
-    }
-    textos.push({ nome: d.nome, paginas })
-  }
-  return { textos, pdfs, truncado }
-}
-
-function blobToBase64(blob) {
-  return new Promise((resolve, reject) => {
-    const r = new FileReader()
-    r.onload = () => resolve(String(r.result).split(',')[1])
-    r.onerror = () => reject(r.error)
-    r.readAsDataURL(blob)
-  })
-}
-
 export const fmtSize = (b) => (b > 1e6 ? (b / 1e6).toFixed(1).replace('.', ',') + ' MB' : Math.max(1, Math.round(b / 1e3)) + ' KB')

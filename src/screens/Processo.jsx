@@ -50,7 +50,7 @@ export default function Processo({ p, c, api }) {
       <PageHead title="Dados do processo">Resumo do edital, contrato atual, pesquisa de preço e comitê.</PageHead>
       {!temDocs && (
         <div className="notice">
-          <span>Anexe o edital no Painel para a IA preencher esta aba e indicar a página de cada dado.</span>
+          <span>Anexe o edital no Painel para o sistema preencher esta aba e indicar a página de cada dado.</span>
           <button className="link" onClick={() => api.go('painel')}>Ir para o Painel</button>
         </div>
       )}

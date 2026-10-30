@@ -31,7 +31,7 @@ export default function EmpresaAtual({ p, api }) {
     return () => clearInterval(t)
   }, [busy])
 
-  const pode = !!(P.objeto || P.municipio || P.orgao)
+  const pode = !!(P.municipio || P.orgaoCnpj)
 
   const buscar = async () => {
     setErro('')
@@ -96,16 +96,17 @@ export default function EmpresaAtual({ p, api }) {
       </div>
       <p className="small muted">
         {pode
-          ? 'Consulta o PNCP, portais da transparência, tribunais de contas, diários oficiais e a web a partir do objeto, órgão e local de execução.'
-          : 'Preencha o objeto e o município (ou o órgão) para buscar.'}
+          ? 'Consulta os contratos publicados no PNCP pelo órgão e no município, e completa os dados da empresa na Receita Federal. Gratuito.'
+          : 'Preencha o município (ou o CNPJ do órgão) para buscar.'}
       </p>
       {busy && (
         <div className="progress" role="status">
           <span className="spinner" aria-hidden="true" />
-          <span>Pesquisando no PNCP e na web… {elapsed}s (pode levar até 3 minutos)</span>
+          <span>Pesquisando no PNCP… {elapsed}s</span>
         </div>
       )}
       {erro && <p className="small neg">{erro}</p>}
+      {pode && !busy && <PesquisaManual P={P} />}
       {top && !busy && (
         <p className="small">
           Mais provável: <strong>{top.razaoSocial}</strong> <Status kind={CONF[top.confianca] || 'pending'}>Confiança {top.confianca}</Status>
@@ -117,7 +118,7 @@ export default function EmpresaAtual({ p, api }) {
           <p>{r.resumo}</p>
           <p className="small muted">
             {res.data && `Busca em ${new Date(res.data).toLocaleString('pt-BR')}. `}
-            {r.pncpEncontrados ?? 0} registro(s) do PNCP analisados{r.buscaWeb === false ? '; busca na web indisponível' : ''}.
+            {r.pncpEncontrados ?? 0} contrato(s) de serviços médicos analisados no PNCP{r.orgaosPesquisados?.length ? ` (órgãos: ${r.orgaosPesquisados.join(', ')})` : ''}.
           </p>
           {r.avisos?.length > 0 && <p className="small warn-text">{r.avisos.join(' · ')}</p>}
           <ol className="cand-list">
@@ -155,9 +156,33 @@ export default function EmpresaAtual({ p, api }) {
           </ol>
           {!r.candidatos?.length && <p className="muted">Nenhuma empresa identificada com segurança. Tente completar o órgão e o CNPJ do órgão e buscar de novo.</p>}
           {r.fontesConsultadas?.length > 0 && <p className="small muted">Consultado: {r.fontesConsultadas.join(', ')}.</p>}
-          <p className="small muted">Resultado gerado por IA a partir de fontes públicas. Confirme no contrato ou no portal antes de usar no comitê.</p>
+          <PesquisaManual P={P} />
+          <p className="small muted">Resultado montado automaticamente a partir do PNCP. Confirme no contrato e nos aditivos antes de usar no comitê.</p>
         </Sheet>
       )}
+    </div>
+  )
+}
+
+// Links para conferir em fontes que não têm API aberta (portais, tribunais de contas, diários oficiais)
+function PesquisaManual({ P }) {
+  const cidade = String(P.municipio || '').split(/[/-]/)[0].trim()
+  const uf = (String(P.municipio || '').match(/[/-]\s?([A-Z]{2})\b/) || [])[1] || ''
+  if (!cidade) return null
+  const g = (q) => `https://www.google.com/search?q=${encodeURIComponent(q)}`
+  const links = [
+    ['PNCP', `https://pncp.gov.br/app/contratos?q=${encodeURIComponent(`serviços médicos ${cidade}`)}`],
+    ['Portal da transparência', g(`portal da transparência ${cidade} ${uf} contratos serviços médicos`)],
+    ['Tribunal de contas', g(`tribunal de contas ${uf} ${cidade} contrato serviços médicos plantão`)],
+    ['Diário oficial', g(`diário oficial ${cidade} ${uf} extrato contrato "serviços médicos"`)],
+    ['Notícias', g(`${cidade} ${uf} empresa serviços médicos UPA hospital contrato`)],
+  ]
+  return (
+    <div className="manual-links">
+      <span className="small muted">Pesquisar também em:</span>
+      {links.map(([t, u]) => (
+        <a key={t} className="chip-link" href={u} target="_blank" rel="noopener noreferrer">{t}</a>
+      ))}
     </div>
   )
 }
