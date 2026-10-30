@@ -1,0 +1,1570 @@
+{
+  "origem": "Parametros_Modelo_Viabilidade.xlsx",
+  "blocos": [
+    "Processo",
+    "TR",
+    "Premissas",
+    "Margem",
+    "Concorrentes"
+  ],
+  "destinos": {
+    "cliente": "tela cliente",
+    "margem": "margem",
+    "agenda": "agenda"
+  },
+  "campos": [
+    {
+      "id": "processo__c6",
+      "bloco": "Processo",
+      "secao": "Identificação",
+      "parametro": "Município/UF",
+      "celula": "C6",
+      "destinos": [
+        "cliente"
+      ],
+      "tipo": "Texto",
+      "opcoes": [],
+      "preenchimento": "Obrigatório",
+      "exemplo": "Botucatu/SP",
+      "observacao": "",
+      "repete": false
+    },
+    {
+      "id": "processo__c7",
+      "bloco": "Processo",
+      "secao": "Identificação",
+      "parametro": "Capital do estado",
+      "celula": "C7",
+      "destinos": [
+        "cliente"
+      ],
+      "tipo": "Texto",
+      "opcoes": [],
+      "preenchimento": "Obrigatório",
+      "exemplo": "São Paulo",
+      "observacao": "",
+      "repete": false
+    },
+    {
+      "id": "processo__c8",
+      "bloco": "Processo",
+      "secao": "Identificação",
+      "parametro": "Distância da capital (km)",
+      "celula": "C8",
+      "destinos": [
+        "cliente"
+      ],
+      "tipo": "Número",
+      "opcoes": [],
+      "preenchimento": "Opcional",
+      "exemplo": "",
+      "observacao": "",
+      "repete": false
+    },
+    {
+      "id": "processo__c11",
+      "bloco": "Processo",
+      "secao": "Identificação",
+      "parametro": "Empresa participante",
+      "celula": "C11",
+      "destinos": [
+        "margem"
+      ],
+      "tipo": "Lista",
+      "opcoes": [
+        "Agile",
+        "Atena",
+        "Atmed",
+        "Deltamed",
+        "Gaia",
+        "Hera",
+        "Hygea",
+        "Inframed",
+        "Prohealth",
+        "Royalmed",
+        "Supramed",
+        "Arpen"
+      ],
+      "preenchimento": "Obrigatório",
+      "exemplo": "",
+      "observacao": "Aparece no Painel",
+      "repete": false
+    },
+    {
+      "id": "processo__c12",
+      "bloco": "Processo",
+      "secao": "Identificação",
+      "parametro": "Modalidade",
+      "celula": "C12",
+      "destinos": [
+        "cliente",
+        "margem"
+      ],
+      "tipo": "Lista",
+      "opcoes": [
+        "Pregão Eletrônico",
+        "Pregão Presencial",
+        "Concorrência",
+        "Dispensa de Licitação",
+        "Emergencial",
+        "Credenciamento",
+        "Coleta de Preço",
+        "Tomada de Preço"
+      ],
+      "preenchimento": "Obrigatório",
+      "exemplo": "Pregão Eletrônico",
+      "observacao": "",
+      "repete": false
+    },
+    {
+      "id": "processo__c13",
+      "bloco": "Processo",
+      "secao": "Identificação",
+      "parametro": "Nº do edital / processo",
+      "celula": "C13",
+      "destinos": [
+        "margem"
+      ],
+      "tipo": "Texto",
+      "opcoes": [],
+      "preenchimento": "Obrigatório",
+      "exemplo": "PE 037/2026-FAMESP/HC · Proc. 52752/2026",
+      "observacao": "",
+      "repete": false
+    },
+    {
+      "id": "processo__c14",
+      "bloco": "Processo",
+      "secao": "Identificação",
+      "parametro": "Data da sessão",
+      "celula": "C14",
+      "destinos": [
+        "margem",
+        "agenda"
+      ],
+      "tipo": "Data (dd/mm/aaaa)",
+      "opcoes": [],
+      "preenchimento": "Obrigatório",
+      "exemplo": "06/11/2026",
+      "observacao": "",
+      "repete": false
+    },
+    {
+      "id": "processo__c15",
+      "bloco": "Processo",
+      "secao": "Identificação",
+      "parametro": "Horário da sessão",
+      "celula": "C15",
+      "destinos": [
+        "margem",
+        "agenda"
+      ],
+      "tipo": "Hora (hh:mm)",
+      "opcoes": [],
+      "preenchimento": "Obrigatório",
+      "exemplo": "09:00",
+      "observacao": "",
+      "repete": false
+    },
+    {
+      "id": "premissas__c7",
+      "bloco": "Premissas",
+      "secao": "Tributos sobre o faturamento",
+      "parametro": "Status da consulta ISS",
+      "celula": "C7",
+      "destinos": [
+        "margem",
+        "agenda"
+      ],
+      "tipo": "Lista",
+      "opcoes": [
+        "Pendente",
+        "Confirmado"
+      ],
+      "preenchimento": "Obrigatório",
+      "exemplo": "Confirmado",
+      "observacao": "Pendente = alerta no Painel",
+      "repete": false
+    },
+    {
+      "id": "processo__c16",
+      "bloco": "Processo",
+      "secao": "Identificação",
+      "parametro": "Tipo de licitação (critério)",
+      "celula": "C16",
+      "destinos": [
+        "margem"
+      ],
+      "tipo": "Lista",
+      "opcoes": [
+        "Menor Preço",
+        "Menor Preço Unitário",
+        "Menor Preço Global",
+        "Menor Preço por Lote",
+        "Menor Preço por Item",
+        "Maior Desconto",
+        "Empreitada por item unitário",
+        "Técnica e Preço"
+      ],
+      "preenchimento": "Obrigatório",
+      "exemplo": "Menor Preço por Item",
+      "observacao": "",
+      "repete": false
+    },
+    {
+      "id": "processo__c17",
+      "bloco": "Processo",
+      "secao": "Identificação",
+      "parametro": "Modo de disputa",
+      "celula": "C17",
+      "destinos": [
+        "margem"
+      ],
+      "tipo": "Lista",
+      "opcoes": [
+        "Aberto",
+        "Aberto e fechado",
+        "Fechado",
+        "Não informado"
+      ],
+      "preenchimento": "Obrigatório",
+      "exemplo": "Aberto",
+      "observacao": "",
+      "repete": false
+    },
+    {
+      "id": "processo__c18",
+      "bloco": "Processo",
+      "secao": "Identificação",
+      "parametro": "Objeto resumido",
+      "celula": "C18",
+      "destinos": [
+        "margem"
+      ],
+      "tipo": "Texto",
+      "opcoes": [],
+      "preenchimento": "Obrigatório",
+      "exemplo": "Plantões médicos de urgência e emergência pediátrica (PSP e PSRP)",
+      "observacao": "",
+      "repete": false
+    },
+    {
+      "id": "processo__c19",
+      "bloco": "Processo",
+      "secao": "Identificação",
+      "parametro": "Local de execução 1",
+      "celula": "C19",
+      "destinos": [
+        "margem"
+      ],
+      "tipo": "Texto",
+      "opcoes": [],
+      "preenchimento": "Obrigatório",
+      "exemplo": "PSP — Pronto Socorro Pediátrico",
+      "observacao": "",
+      "repete": false
+    },
+    {
+      "id": "processo__c20",
+      "bloco": "Processo",
+      "secao": "Identificação",
+      "parametro": "Local de execução 2",
+      "celula": "C20",
+      "destinos": [
+        "margem"
+      ],
+      "tipo": "Texto",
+      "opcoes": [],
+      "preenchimento": "Se houver",
+      "exemplo": "PSRP — Pronto Socorro Referenciado Pediátrico",
+      "observacao": "",
+      "repete": false
+    },
+    {
+      "id": "processo__f6",
+      "bloco": "Processo",
+      "secao": "Empresa atual (contrato vigente)",
+      "parametro": "Razão social",
+      "celula": "F6",
+      "destinos": [
+        "margem"
+      ],
+      "tipo": "Texto",
+      "opcoes": [],
+      "preenchimento": "Se houver",
+      "exemplo": "",
+      "observacao": "",
+      "repete": false
+    },
+    {
+      "id": "processo__f7",
+      "bloco": "Processo",
+      "secao": "Empresa atual (contrato vigente)",
+      "parametro": "CNPJ",
+      "celula": "F7",
+      "destinos": [
+        "margem"
+      ],
+      "tipo": "Texto",
+      "opcoes": [],
+      "preenchimento": "Se houver",
+      "exemplo": "",
+      "observacao": "",
+      "repete": false
+    },
+    {
+      "id": "processo__f8",
+      "bloco": "Processo",
+      "secao": "Empresa atual (contrato vigente)",
+      "parametro": "Cidade/UF",
+      "celula": "F8",
+      "destinos": [
+        "margem"
+      ],
+      "tipo": "Texto",
+      "opcoes": [],
+      "preenchimento": "Se houver",
+      "exemplo": "",
+      "observacao": "",
+      "repete": false
+    },
+    {
+      "id": "processo__f9",
+      "bloco": "Processo",
+      "secao": "Empresa atual (contrato vigente)",
+      "parametro": "Administrador",
+      "celula": "F9",
+      "destinos": [
+        "margem"
+      ],
+      "tipo": "Texto",
+      "opcoes": [],
+      "preenchimento": "Se houver",
+      "exemplo": "",
+      "observacao": "",
+      "repete": false
+    },
+    {
+      "id": "processo__f12",
+      "bloco": "Processo",
+      "secao": "Empresa atual (contrato vigente)",
+      "parametro": "Valor global do contrato",
+      "celula": "F12",
+      "destinos": [
+        "margem"
+      ],
+      "tipo": "Moeda (R$)",
+      "opcoes": [],
+      "preenchimento": "Se houver",
+      "exemplo": "",
+      "observacao": "Gera o valor mensal e a comparação com nosso preço",
+      "repete": false
+    },
+    {
+      "id": "processo__f13",
+      "bloco": "Processo",
+      "secao": "Empresa atual (contrato vigente)",
+      "parametro": "Vigência do contrato (meses)",
+      "celula": "F13",
+      "destinos": [
+        "margem"
+      ],
+      "tipo": "Número",
+      "opcoes": [],
+      "preenchimento": "Se houver",
+      "exemplo": "12",
+      "observacao": "",
+      "repete": false
+    },
+    {
+      "id": "processo__f16",
+      "bloco": "Processo",
+      "secao": "Empresa atual (contrato vigente)",
+      "parametro": "Itens / valores praticados",
+      "celula": "F16",
+      "destinos": [
+        "margem"
+      ],
+      "tipo": "Texto longo",
+      "opcoes": [],
+      "preenchimento": "Se houver",
+      "exemplo": "Pasquim R$ 850/plantão 6h = R$ 141,67/h",
+      "observacao": "",
+      "repete": false
+    },
+    {
+      "id": "processo__f20",
+      "bloco": "Processo",
+      "secao": "Pesquisa de preço (valores a pagar)",
+      "parametro": "Status da pesquisa",
+      "celula": "F20",
+      "destinos": [
+        "margem"
+      ],
+      "tipo": "Lista",
+      "opcoes": [
+        "Pendente",
+        "Em andamento",
+        "Concluído"
+      ],
+      "preenchimento": "Obrigatório",
+      "exemplo": "Concluído",
+      "observacao": "Alimenta o checklist do Painel",
+      "repete": false
+    },
+    {
+      "id": "processo__f22",
+      "bloco": "Processo",
+      "secao": "Pesquisa de preço (valores a pagar)",
+      "parametro": "Cidades de referência",
+      "celula": "F22",
+      "destinos": [
+        "margem"
+      ],
+      "tipo": "Texto",
+      "opcoes": [],
+      "preenchimento": "Opcional",
+      "exemplo": "",
+      "observacao": "",
+      "repete": false
+    },
+    {
+      "id": "processo__f23",
+      "bloco": "Processo",
+      "secao": "Pesquisa de preço (valores a pagar)",
+      "parametro": "Observações / itens pesquisados",
+      "celula": "F23",
+      "destinos": [
+        "margem"
+      ],
+      "tipo": "Texto longo",
+      "opcoes": [],
+      "preenchimento": "Opcional",
+      "exemplo": "Valor-hora pediatra / generalista c/ PALS na região",
+      "observacao": "",
+      "repete": false
+    },
+    {
+      "id": "processo__c26",
+      "bloco": "Processo",
+      "secao": "Valores e prazos",
+      "parametro": "Valor estimado global",
+      "celula": "C26",
+      "destinos": [
+        "margem"
+      ],
+      "tipo": "Moeda (R$)",
+      "opcoes": [],
+      "preenchimento": "Fórmula padrão (sobrescrever se preciso)",
+      "exemplo": "Fórmula: =Margem!G9*12",
+      "observacao": "Padrão = estimado mensal da Margem × 12; digitar o valor do edital se for diferente",
+      "repete": false
+    },
+    {
+      "id": "processo__c27",
+      "bloco": "Processo",
+      "secao": "Valores e prazos",
+      "parametro": "Vigência (meses)",
+      "celula": "C27",
+      "destinos": [
+        "margem"
+      ],
+      "tipo": "Número",
+      "opcoes": [],
+      "preenchimento": "Obrigatório",
+      "exemplo": "12",
+      "observacao": "Usada no valor global e nos concorrentes",
+      "repete": false
+    },
+    {
+      "id": "processo__c29",
+      "bloco": "Processo",
+      "secao": "Valores e prazos",
+      "parametro": "Renovação",
+      "celula": "C29",
+      "destinos": [
+        "margem"
+      ],
+      "tipo": "Lista",
+      "opcoes": [
+        "Até 06 meses",
+        "Até 12 meses",
+        "Até 24 meses",
+        "Até 5 anos",
+        "Até 10 anos",
+        "Período por igual",
+        "Ata Reg. Preço"
+      ],
+      "preenchimento": "Obrigatório",
+      "exemplo": "Até 5 anos",
+      "observacao": "",
+      "repete": false
+    },
+    {
+      "id": "processo__c30",
+      "bloco": "Processo",
+      "secao": "Valores e prazos",
+      "parametro": "Início previsto do contrato",
+      "celula": "C30",
+      "destinos": [
+        "margem"
+      ],
+      "tipo": "Data (dd/mm/aaaa)",
+      "opcoes": [],
+      "preenchimento": "Opcional",
+      "exemplo": "",
+      "observacao": "Define o 1º mês da Projeção",
+      "repete": false
+    },
+    {
+      "id": "processo__f26",
+      "bloco": "Processo",
+      "secao": "Comitê de precificação",
+      "parametro": "Data prevista",
+      "celula": "F26",
+      "destinos": [
+        "margem"
+      ],
+      "tipo": "Data (dd/mm/aaaa)",
+      "opcoes": [],
+      "preenchimento": "Obrigatório",
+      "exemplo": "",
+      "observacao": "Alimenta o checklist do Painel",
+      "repete": false
+    },
+    {
+      "id": "processo__f27",
+      "bloco": "Processo",
+      "secao": "Comitê de precificação",
+      "parametro": "Data em que ocorreu",
+      "celula": "F27",
+      "destinos": [
+        "margem"
+      ],
+      "tipo": "Data (dd/mm/aaaa)",
+      "opcoes": [],
+      "preenchimento": "Se houver",
+      "exemplo": "",
+      "observacao": "",
+      "repete": false
+    },
+    {
+      "id": "processo__f28",
+      "bloco": "Processo",
+      "secao": "Comitê de precificação",
+      "parametro": "Status",
+      "celula": "F28",
+      "destinos": [
+        "margem"
+      ],
+      "tipo": "Lista",
+      "opcoes": [
+        "Pendente",
+        "Em andamento",
+        "Concluído"
+      ],
+      "preenchimento": "Obrigatório",
+      "exemplo": "Pendente",
+      "observacao": "",
+      "repete": false
+    },
+    {
+      "id": "processo__f29",
+      "bloco": "Processo",
+      "secao": "Comitê de precificação",
+      "parametro": "Decisão",
+      "celula": "F29",
+      "destinos": [
+        "margem"
+      ],
+      "tipo": "Lista",
+      "opcoes": [
+        "Participar",
+        "Não participar",
+        "Pendente"
+      ],
+      "preenchimento": "Obrigatório",
+      "exemplo": "Pendente",
+      "observacao": "",
+      "repete": false
+    },
+    {
+      "id": "processo__f30",
+      "bloco": "Processo",
+      "secao": "Comitê de precificação",
+      "parametro": "Quem compareceu?",
+      "celula": "F30",
+      "destinos": [
+        "margem"
+      ],
+      "tipo": "Texto",
+      "opcoes": [],
+      "preenchimento": "Opcional",
+      "exemplo": "",
+      "observacao": "",
+      "repete": false
+    },
+    {
+      "id": "processo__c33",
+      "bloco": "Processo",
+      "secao": "Regras do edital",
+      "parametro": "Exige garantia de proposta?",
+      "celula": "C33",
+      "destinos": [
+        "margem"
+      ],
+      "tipo": "Lista",
+      "opcoes": [
+        "Sim",
+        "Não",
+        "Não informado"
+      ],
+      "preenchimento": "Obrigatório",
+      "exemplo": "Não",
+      "observacao": "",
+      "repete": false
+    },
+    {
+      "id": "processo__c34",
+      "bloco": "Processo",
+      "secao": "Regras do edital",
+      "parametro": "Exige garantia contratual?",
+      "celula": "C34",
+      "destinos": [
+        "margem"
+      ],
+      "tipo": "Lista",
+      "opcoes": [
+        "Sim",
+        "Não",
+        "Não informado"
+      ],
+      "preenchimento": "Obrigatório",
+      "exemplo": "Sim",
+      "observacao": "",
+      "repete": false
+    },
+    {
+      "id": "processo__c35",
+      "bloco": "Processo",
+      "secao": "Regras do edital",
+      "parametro": "Quadro de serviços indica coordenação / RT / diretor técnico?",
+      "celula": "C35",
+      "destinos": [
+        "margem"
+      ],
+      "tipo": "Lista",
+      "opcoes": [
+        "Sim",
+        "Não",
+        "Não informado"
+      ],
+      "preenchimento": "Obrigatório",
+      "exemplo": "Não",
+      "observacao": "",
+      "repete": false
+    },
+    {
+      "id": "processo__c36",
+      "bloco": "Processo",
+      "secao": "Regras do edital",
+      "parametro": "Termo de referência indica coordenação / RT / diretor técnico?",
+      "celula": "C36",
+      "destinos": [
+        "margem"
+      ],
+      "tipo": "Lista",
+      "opcoes": [
+        "Sim",
+        "Não",
+        "Não informado"
+      ],
+      "preenchimento": "Obrigatório",
+      "exemplo": "Sim",
+      "observacao": "Se Sim, a Margem alerta para custear coordenação",
+      "repete": false
+    },
+    {
+      "id": "processo__c37",
+      "bloco": "Processo",
+      "secao": "Regras do edital",
+      "parametro": "Permite subcontratação?",
+      "celula": "C37",
+      "destinos": [
+        "margem"
+      ],
+      "tipo": "Lista",
+      "opcoes": [
+        "Sim",
+        "Não",
+        "Parcial",
+        "Somente c/ autorização",
+        "Não informado"
+      ],
+      "preenchimento": "Obrigatório",
+      "exemplo": "Não",
+      "observacao": "",
+      "repete": false
+    },
+    {
+      "id": "processo__c38",
+      "bloco": "Processo",
+      "secao": "Regras do edital",
+      "parametro": "% de subcontratação",
+      "celula": "C38",
+      "destinos": [
+        "margem"
+      ],
+      "tipo": "Percentual",
+      "opcoes": [],
+      "preenchimento": "Se houver",
+      "exemplo": "-",
+      "observacao": "",
+      "repete": false
+    },
+    {
+      "id": "processo__c39",
+      "bloco": "Processo",
+      "secao": "Regras do edital",
+      "parametro": "Permite cooperativa?",
+      "celula": "C39",
+      "destinos": [
+        "margem"
+      ],
+      "tipo": "Lista",
+      "opcoes": [
+        "Sim",
+        "Não",
+        "Não informado"
+      ],
+      "preenchimento": "Obrigatório",
+      "exemplo": "Não informado",
+      "observacao": "",
+      "repete": false
+    },
+    {
+      "id": "processo__c40",
+      "bloco": "Processo",
+      "secao": "Regras do edital",
+      "parametro": "Permite Organização Social?",
+      "celula": "C40",
+      "destinos": [
+        "margem"
+      ],
+      "tipo": "Lista",
+      "opcoes": [
+        "Sim",
+        "Não",
+        "Não informado"
+      ],
+      "preenchimento": "Obrigatório",
+      "exemplo": "Não informado",
+      "observacao": "",
+      "repete": false
+    },
+    {
+      "id": "processo__c41",
+      "bloco": "Processo",
+      "secao": "Regras do edital",
+      "parametro": "Permite OSCIP?",
+      "celula": "C41",
+      "destinos": [
+        "margem"
+      ],
+      "tipo": "Lista",
+      "opcoes": [
+        "Sim",
+        "Não",
+        "Não informado"
+      ],
+      "preenchimento": "Obrigatório",
+      "exemplo": "Não informado",
+      "observacao": "",
+      "repete": false
+    },
+    {
+      "id": "processo__c42",
+      "bloco": "Processo",
+      "secao": "Regras do edital",
+      "parametro": "Permite consórcio?",
+      "celula": "C42",
+      "destinos": [
+        "margem"
+      ],
+      "tipo": "Lista",
+      "opcoes": [
+        "Sim",
+        "Não",
+        "Não informado"
+      ],
+      "preenchimento": "Obrigatório",
+      "exemplo": "Não",
+      "observacao": "",
+      "repete": false
+    },
+    {
+      "id": "processo__c43",
+      "bloco": "Processo",
+      "secao": "Regras do edital",
+      "parametro": "Responsabilidade pelo fornecimento de EPI",
+      "celula": "C43",
+      "destinos": [
+        "margem"
+      ],
+      "tipo": "Lista",
+      "opcoes": [
+        "Contratante",
+        "Contratada",
+        "Não informado"
+      ],
+      "preenchimento": "Obrigatório",
+      "exemplo": "Contratada",
+      "observacao": "",
+      "repete": false
+    },
+    {
+      "id": "processo__c44",
+      "bloco": "Processo",
+      "secao": "Regras do edital",
+      "parametro": "Alimentação",
+      "celula": "C44",
+      "destinos": [
+        "margem"
+      ],
+      "tipo": "Texto",
+      "opcoes": [],
+      "preenchimento": "Obrigatório",
+      "exemplo": "Por conta da contratada",
+      "observacao": "",
+      "repete": false
+    },
+    {
+      "id": "processo__e34",
+      "bloco": "Processo",
+      "secao": "Dados extras",
+      "parametro": "Após arremate, quanto tempo apresentar profissionais?",
+      "celula": "E34",
+      "destinos": [
+        "margem"
+      ],
+      "tipo": "Texto longo",
+      "opcoes": [],
+      "preenchimento": "Obrigatório",
+      "exemplo": "Prazos, garantia, atestados, pagamento, reajuste…",
+      "observacao": "Campo livre com os pontos de atenção do edital",
+      "repete": false
+    },
+    {
+      "id": "processo__c47",
+      "bloco": "Processo",
+      "secao": "Equipe técnica",
+      "parametro": "Apresentar documento equipe técnica para assinar contrato?",
+      "celula": "C47",
+      "destinos": [
+        "margem"
+      ],
+      "tipo": "Texto longo",
+      "opcoes": [],
+      "preenchimento": "Obrigatório",
+      "exemplo": "1 médico por plantão; residência/RQE em Pediatria…",
+      "observacao": "",
+      "repete": false
+    },
+    {
+      "id": "processo__c48",
+      "bloco": "Processo",
+      "secao": "Equipe técnica",
+      "parametro": "Exige cursos (ACLS/ATLS/PALS etc.)?",
+      "celula": "C48",
+      "destinos": [
+        "margem"
+      ],
+      "tipo": "Lista",
+      "opcoes": [
+        "Sim",
+        "Não",
+        "Não informado"
+      ],
+      "preenchimento": "Obrigatório",
+      "exemplo": "Sim",
+      "observacao": "",
+      "repete": false
+    },
+    {
+      "id": "processo__c49",
+      "bloco": "Processo",
+      "secao": "Equipe técnica",
+      "parametro": "Quais documentos apresentar para assinatura contrato?",
+      "celula": "C49",
+      "destinos": [
+        "margem"
+      ],
+      "tipo": "Texto",
+      "opcoes": [],
+      "preenchimento": "Se houver",
+      "exemplo": "PALS ou CAEP",
+      "observacao": "",
+      "repete": false
+    },
+    {
+      "id": "processo__c50",
+      "bloco": "Processo",
+      "secao": "Equipe técnica",
+      "parametro": "Permite pós-graduação?",
+      "celula": "C50",
+      "destinos": [
+        "margem"
+      ],
+      "tipo": "Lista",
+      "opcoes": [
+        "Sim",
+        "Não",
+        "Não informado"
+      ],
+      "preenchimento": "Obrigatório",
+      "exemplo": "Não informado",
+      "observacao": "",
+      "repete": false
+    },
+    {
+      "id": "processo__c51",
+      "bloco": "Processo",
+      "secao": "Equipe técnica",
+      "parametro": "Médico especialista (somente título)?",
+      "celula": "C51",
+      "destinos": [
+        "margem"
+      ],
+      "tipo": "Lista",
+      "opcoes": [
+        "Sim",
+        "Não",
+        "Não informado"
+      ],
+      "preenchimento": "Obrigatório",
+      "exemplo": "Não",
+      "observacao": "",
+      "repete": false
+    },
+    {
+      "id": "processo__c52",
+      "bloco": "Processo",
+      "secao": "Equipe técnica",
+      "parametro": "Médico especialista com RQE (registro no CRM)?",
+      "celula": "C52",
+      "destinos": [
+        "margem"
+      ],
+      "tipo": "Lista",
+      "opcoes": [
+        "Sim",
+        "Não",
+        "Não informado"
+      ],
+      "preenchimento": "Obrigatório",
+      "exemplo": "Não",
+      "observacao": "",
+      "repete": false
+    },
+    {
+      "id": "tr__c6-c",
+      "bloco": "TR",
+      "secao": "Quadro de itens (por item)",
+      "parametro": "Profissional / serviço",
+      "celula": "C6:C…",
+      "destinos": [
+        "margem"
+      ],
+      "tipo": "Texto",
+      "opcoes": [],
+      "preenchimento": "Obrigatório",
+      "exemplo": "Médico Emergencista Pediatria - Plantão 12h (PSP)",
+      "observacao": "Repetir para cada item",
+      "repete": true
+    },
+    {
+      "id": "tr__d6-d",
+      "bloco": "TR",
+      "secao": "Quadro de itens (por item)",
+      "parametro": "Local / unidade",
+      "celula": "D6:D…",
+      "destinos": [
+        "margem"
+      ],
+      "tipo": "Texto",
+      "opcoes": [],
+      "preenchimento": "Obrigatório",
+      "exemplo": "PSP",
+      "observacao": "",
+      "repete": true
+    },
+    {
+      "id": "tr__e6-e",
+      "bloco": "TR",
+      "secao": "Quadro de itens (por item)",
+      "parametro": "Carga informada (texto do TR)",
+      "celula": "E6:E…",
+      "destinos": [
+        "margem"
+      ],
+      "tipo": "Texto",
+      "opcoes": [],
+      "preenchimento": "Obrigatório",
+      "exemplo": "2.920 plantões de 12h/ano — diurno e noturno, seg-dom",
+      "observacao": "Transcrever como está no TR",
+      "repete": true
+    },
+    {
+      "id": "tr__f6-f",
+      "bloco": "TR",
+      "secao": "Quadro de itens (por item)",
+      "parametro": "Base da carga",
+      "celula": "F6:F…",
+      "destinos": [
+        "margem"
+      ],
+      "tipo": "Lista",
+      "opcoes": [
+        "h/mês",
+        "h/dia",
+        "h/semana",
+        "plantões 12h/mês",
+        "plantões 24h/mês"
+      ],
+      "preenchimento": "Obrigatório",
+      "exemplo": "plantões 12h/mês",
+      "observacao": "Define o fator de conversão para horas/mês",
+      "repete": true
+    },
+    {
+      "id": "tr__g6-g",
+      "bloco": "TR",
+      "secao": "Quadro de itens (por item)",
+      "parametro": "Qtd informada",
+      "celula": "G6:G…",
+      "destinos": [
+        "margem"
+      ],
+      "tipo": "Número (aceita fórmula)",
+      "opcoes": [],
+      "preenchimento": "Obrigatório",
+      "exemplo": "243.33333333333334",
+      "observacao": "Quantidade mensal na unidade da base da carga",
+      "repete": true
+    },
+    {
+      "id": "tr__h6-h",
+      "bloco": "TR",
+      "secao": "Quadro de itens (por item)",
+      "parametro": "Nº de profissionais",
+      "celula": "H6:H…",
+      "destinos": [
+        "margem"
+      ],
+      "tipo": "Número",
+      "opcoes": [],
+      "preenchimento": "Obrigatório",
+      "exemplo": "1",
+      "observacao": "Deixar 1 quando o TR já trouxer o total do item",
+      "repete": true
+    },
+    {
+      "id": "tr__j6-j",
+      "bloco": "TR",
+      "secao": "Quadro de itens (por item)",
+      "parametro": "Valor hora estimado",
+      "celula": "J6:J…",
+      "destinos": [
+        "margem"
+      ],
+      "tipo": "Moeda (R$)",
+      "opcoes": [],
+      "preenchimento": "Se houver",
+      "exemplo": "",
+      "observacao": "Em branco quando o edital é sigiloso / sem estimativa",
+      "repete": true
+    },
+    {
+      "id": "tr__l6-l",
+      "bloco": "TR",
+      "secao": "Quadro de itens (por item)",
+      "parametro": "Valor mensal no TR",
+      "celula": "L6:L…",
+      "destinos": [
+        "margem"
+      ],
+      "tipo": "Moeda (R$)",
+      "opcoes": [],
+      "preenchimento": "Se houver",
+      "exemplo": "",
+      "observacao": "Usado para conferir com o valor calculado",
+      "repete": true
+    },
+    {
+      "id": "premissas__c5",
+      "bloco": "Premissas",
+      "secao": "Tributos sobre o faturamento",
+      "parametro": "ISS — com abertura de filial (Cód. 4.01)",
+      "celula": "C5",
+      "destinos": [
+        "margem"
+      ],
+      "tipo": "Percentual",
+      "opcoes": [],
+      "preenchimento": "Obrigatório",
+      "exemplo": "5,00%",
+      "observacao": "O modelo aplica o MAIOR entre as duas alíquotas",
+      "repete": false
+    },
+    {
+      "id": "premissas__c6",
+      "bloco": "Premissas",
+      "secao": "Tributos sobre o faturamento",
+      "parametro": "ISS — sem abertura de filial (Cód. 17.05)",
+      "celula": "C6",
+      "destinos": [
+        "margem"
+      ],
+      "tipo": "Percentual",
+      "opcoes": [],
+      "preenchimento": "Obrigatório",
+      "exemplo": "2,00%",
+      "observacao": "",
+      "repete": false
+    },
+    {
+      "id": "premissas__c9",
+      "bloco": "Premissas",
+      "secao": "Tributos sobre o faturamento",
+      "parametro": "PIS",
+      "celula": "C9",
+      "destinos": [
+        "margem"
+      ],
+      "tipo": "Percentual",
+      "opcoes": [],
+      "preenchimento": "Obrigatório",
+      "exemplo": "0,65%",
+      "observacao": "",
+      "repete": false
+    },
+    {
+      "id": "premissas__c10",
+      "bloco": "Premissas",
+      "secao": "Tributos sobre o faturamento",
+      "parametro": "COFINS",
+      "celula": "C10",
+      "destinos": [
+        "margem"
+      ],
+      "tipo": "Percentual",
+      "opcoes": [],
+      "preenchimento": "Obrigatório",
+      "exemplo": "3,00%",
+      "observacao": "",
+      "repete": false
+    },
+    {
+      "id": "premissas__c11",
+      "bloco": "Premissas",
+      "secao": "Tributos sobre o faturamento",
+      "parametro": "CSLL",
+      "celula": "C11",
+      "destinos": [
+        "margem"
+      ],
+      "tipo": "Percentual",
+      "opcoes": [],
+      "preenchimento": "Obrigatório",
+      "exemplo": "1,08%",
+      "observacao": "",
+      "repete": false
+    },
+    {
+      "id": "premissas__c12",
+      "bloco": "Premissas",
+      "secao": "Tributos sobre o faturamento",
+      "parametro": "IR",
+      "celula": "C12",
+      "destinos": [
+        "margem"
+      ],
+      "tipo": "Percentual",
+      "opcoes": [],
+      "preenchimento": "Obrigatório",
+      "exemplo": "2,00%",
+      "observacao": "",
+      "repete": false
+    },
+    {
+      "id": "premissas__c16",
+      "bloco": "Premissas",
+      "secao": "Reajustes anuais (projeção)",
+      "parametro": "Reajuste do faturamento (IPCA estimado)",
+      "celula": "C16",
+      "destinos": [
+        "margem"
+      ],
+      "tipo": "Percentual",
+      "opcoes": [],
+      "preenchimento": "Obrigatório",
+      "exemplo": "5,00%",
+      "observacao": "Aplicado a partir do 2º ano",
+      "repete": false
+    },
+    {
+      "id": "premissas__c17",
+      "bloco": "Premissas",
+      "secao": "Reajustes anuais (projeção)",
+      "parametro": "Reajuste do valor pago aos médicos",
+      "celula": "C17",
+      "destinos": [
+        "margem"
+      ],
+      "tipo": "Percentual",
+      "opcoes": [],
+      "preenchimento": "Obrigatório",
+      "exemplo": "2,50%",
+      "observacao": "Aplicado a partir do 2º ano",
+      "repete": false
+    },
+    {
+      "id": "premissas__c18",
+      "bloco": "Premissas",
+      "secao": "Reajustes anuais (projeção)",
+      "parametro": "Reajuste dos custos indiretos",
+      "celula": "C18",
+      "destinos": [
+        "margem"
+      ],
+      "tipo": "Percentual",
+      "opcoes": [],
+      "preenchimento": "Fórmula padrão (sobrescrever se preciso)",
+      "exemplo": "Fórmula: =C16",
+      "observacao": "Padrão acompanha o IPCA",
+      "repete": false
+    },
+    {
+      "id": "premissas__c21",
+      "bloco": "Premissas",
+      "secao": "Critérios de decisão",
+      "parametro": "Margem mínima (nosso mínimo)",
+      "celula": "C21",
+      "destinos": [
+        "margem"
+      ],
+      "tipo": "Percentual",
+      "opcoes": [],
+      "preenchimento": "Obrigatório",
+      "exemplo": "6,0%",
+      "observacao": "Define o status dos itens e o lance limite",
+      "repete": false
+    },
+    {
+      "id": "margem__c6-c",
+      "bloco": "Margem",
+      "secao": "Itens (por item)",
+      "parametro": "Descrição (Médico + especialidade)",
+      "celula": "C6:C…",
+      "destinos": [
+        "margem"
+      ],
+      "tipo": "Texto",
+      "opcoes": [],
+      "preenchimento": "Obrigatório",
+      "exemplo": "Médico Emergencista Pediatria - Plantão 12h (PSP)",
+      "observacao": "Repetir para cada item",
+      "repete": true
+    },
+    {
+      "id": "margem__d6-d",
+      "bloco": "Margem",
+      "secao": "Itens (por item)",
+      "parametro": "Unidade",
+      "celula": "D6:D…",
+      "destinos": [
+        "margem"
+      ],
+      "tipo": "Lista",
+      "opcoes": [
+        "Hora",
+        "Plantão 12h",
+        "Plantão 24h",
+        "Consulta",
+        "Mensal"
+      ],
+      "preenchimento": "Obrigatório",
+      "exemplo": "Hora",
+      "observacao": "",
+      "repete": true
+    },
+    {
+      "id": "margem__e6-e",
+      "bloco": "Margem",
+      "secao": "Itens (por item)",
+      "parametro": "Qtd / mês",
+      "celula": "E6:E…",
+      "destinos": [
+        "margem"
+      ],
+      "tipo": "Número",
+      "opcoes": [],
+      "preenchimento": "Fórmula padrão (sobrescrever se preciso)",
+      "exemplo": "Fórmula: =TR!I6",
+      "observacao": "Padrão puxa as horas/mês da aba TR",
+      "repete": true
+    },
+    {
+      "id": "margem__f6-f",
+      "bloco": "Margem",
+      "secao": "Itens (por item)",
+      "parametro": "Valor unit. ESTIMADO (edital)",
+      "celula": "F6:F…",
+      "destinos": [
+        "margem"
+      ],
+      "tipo": "Moeda (R$) ou texto",
+      "opcoes": [],
+      "preenchimento": "Obrigatório",
+      "exemplo": "Sigiloso",
+      "observacao": "Digitar \"Sigiloso\" quando não houver valor publicado",
+      "repete": true
+    },
+    {
+      "id": "margem__h6-h",
+      "bloco": "Margem",
+      "secao": "Itens (por item)",
+      "parametro": "Valor unit. PROPOSTO",
+      "celula": "H6:H…",
+      "destinos": [
+        "margem"
+      ],
+      "tipo": "Moeda (R$)",
+      "opcoes": [],
+      "preenchimento": "Obrigatório",
+      "exemplo": "R$ 175,00",
+      "observacao": "Nosso preço de faturamento",
+      "repete": true
+    },
+    {
+      "id": "margem__i6-i",
+      "bloco": "Margem",
+      "secao": "Itens (por item)",
+      "parametro": "Valor unit. A PAGAR",
+      "celula": "I6:I…",
+      "destinos": [
+        "margem"
+      ],
+      "tipo": "Moeda (R$)",
+      "opcoes": [],
+      "preenchimento": "Obrigatório",
+      "exemplo": "R$ 141,66",
+      "observacao": "Custo do médico por unidade",
+      "repete": true
+    },
+    {
+      "id": "margem__g13",
+      "bloco": "Margem",
+      "secao": "Custos indiretos mensais",
+      "parametro": "Coordenação / RT / Diretor técnico",
+      "celula": "G13",
+      "destinos": [
+        "margem"
+      ],
+      "tipo": "Moeda (R$)",
+      "opcoes": [],
+      "preenchimento": "Se houver",
+      "exemplo": "R$ 0,00",
+      "observacao": "Avaliar quando o TR exigir coordenação",
+      "repete": false
+    },
+    {
+      "id": "margem__g14",
+      "bloco": "Margem",
+      "secao": "Custos indiretos mensais",
+      "parametro": "Outras despesas (equipamentos, insumos, EPI, alimentação)",
+      "celula": "G14",
+      "destinos": [
+        "margem"
+      ],
+      "tipo": "Moeda (R$)",
+      "opcoes": [],
+      "preenchimento": "Se houver",
+      "exemplo": "R$ 0,00",
+      "observacao": "",
+      "repete": false
+    },
+    {
+      "id": "margem__g15",
+      "bloco": "Margem",
+      "secao": "Custos indiretos mensais",
+      "parametro": "Despesas administrativas",
+      "celula": "G15",
+      "destinos": [
+        "margem"
+      ],
+      "tipo": "Moeda (R$)",
+      "opcoes": [],
+      "preenchimento": "Se houver",
+      "exemplo": "R$ 0,00",
+      "observacao": "",
+      "repete": false
+    },
+    {
+      "id": "concorrentes__c9-c28",
+      "bloco": "Concorrentes",
+      "secao": "Ranking (por concorrente)",
+      "parametro": "Razão social",
+      "celula": "C9:C28",
+      "destinos": [
+        "cliente"
+      ],
+      "tipo": "Texto",
+      "opcoes": [],
+      "preenchimento": "Se houver",
+      "exemplo": "",
+      "observacao": "Repetir para cada concorrente",
+      "repete": true
+    },
+    {
+      "id": "concorrentes__e9-e28",
+      "bloco": "Concorrentes",
+      "secao": "Ranking (por concorrente)",
+      "parametro": "CNPJ",
+      "celula": "E9:E28",
+      "destinos": [
+        "cliente"
+      ],
+      "tipo": "Texto",
+      "opcoes": [],
+      "preenchimento": "Se houver",
+      "exemplo": "",
+      "observacao": "",
+      "repete": true
+    },
+    {
+      "id": "concorrentes__f9-f28",
+      "bloco": "Concorrentes",
+      "secao": "Ranking (por concorrente)",
+      "parametro": "Porte",
+      "celula": "F9:F28",
+      "destinos": [
+        "cliente"
+      ],
+      "tipo": "Lista",
+      "opcoes": [
+        "MEI",
+        "ME",
+        "EPP",
+        "DEMAIS",
+        "O.S"
+      ],
+      "preenchimento": "Opcional",
+      "exemplo": "",
+      "observacao": "",
+      "repete": true
+    },
+    {
+      "id": "concorrentes__g9-g28",
+      "bloco": "Concorrentes",
+      "secao": "Ranking (por concorrente)",
+      "parametro": "Administrador",
+      "celula": "G9:G28",
+      "destinos": [
+        "cliente"
+      ],
+      "tipo": "Texto",
+      "opcoes": [],
+      "preenchimento": "Opcional",
+      "exemplo": "",
+      "observacao": "",
+      "repete": true
+    },
+    {
+      "id": "concorrentes__i9-i28",
+      "bloco": "Concorrentes",
+      "secao": "Ranking (por concorrente)",
+      "parametro": "Cidade",
+      "celula": "I9:I28",
+      "destinos": [
+        "cliente"
+      ],
+      "tipo": "Texto",
+      "opcoes": [],
+      "preenchimento": "Opcional",
+      "exemplo": "",
+      "observacao": "",
+      "repete": true
+    },
+    {
+      "id": "concorrentes__j9-j28",
+      "bloco": "Concorrentes",
+      "secao": "Ranking (por concorrente)",
+      "parametro": "UF",
+      "celula": "J9:J28",
+      "destinos": [
+        "cliente"
+      ],
+      "tipo": "Texto",
+      "opcoes": [],
+      "preenchimento": "Opcional",
+      "exemplo": "",
+      "observacao": "",
+      "repete": true
+    },
+    {
+      "id": "concorrentes__k9-k28",
+      "bloco": "Concorrentes",
+      "secao": "Ranking (por concorrente)",
+      "parametro": "Valor unitário",
+      "celula": "K9:K28",
+      "destinos": [
+        "cliente"
+      ],
+      "tipo": "Moeda (R$)",
+      "opcoes": [],
+      "preenchimento": "Se houver",
+      "exemplo": "",
+      "observacao": "",
+      "repete": true
+    },
+    {
+      "id": "concorrentes__l9-l28",
+      "bloco": "Concorrentes",
+      "secao": "Ranking (por concorrente)",
+      "parametro": "Valor global",
+      "celula": "L9:L28",
+      "destinos": [
+        "cliente"
+      ],
+      "tipo": "Moeda (R$)",
+      "opcoes": [],
+      "preenchimento": "Se houver",
+      "exemplo": "",
+      "observacao": "Gera mensal, desconto e nossa margem nesse preço",
+      "repete": true
+    },
+    {
+      "id": "concorrentes__p9-p28",
+      "bloco": "Concorrentes",
+      "secao": "Ranking (por concorrente)",
+      "parametro": "Status",
+      "celula": "P9:P28",
+      "destinos": [
+        "cliente"
+      ],
+      "tipo": "Lista",
+      "opcoes": [
+        "Vencedor",
+        "Habilitado",
+        "Inabilitado",
+        "Desclassificado",
+        "Em análise"
+      ],
+      "preenchimento": "Se houver",
+      "exemplo": "",
+      "observacao": "",
+      "repete": true
+    }
+  ]
+}

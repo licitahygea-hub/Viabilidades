@@ -1,142 +1,156 @@
-import { useMemo, useState } from 'react'
-import {
-  ArrowLeft, LayoutDashboard, FileText, ClipboardList, Calculator, Ellipsis,
-  Gavel, Users, ChartLine, Presentation, SlidersHorizontal,
-} from './components/icons'
-import { useProcesses, useHashRoute } from './lib/store'
-import { compute } from './lib/calc'
-import { patchProcesso } from './lib/comite'
-import { Sheet, Status } from './components/ui'
-import Home from './screens/Home'
-import Painel from './screens/Painel'
-import Processo from './screens/Processo'
-import TR from './screens/TR'
-import Margem from './screens/Margem'
-import Simulador from './screens/Simulador'
-import Concorrentes from './screens/Concorrentes'
-import Projecao from './screens/Projecao'
-import Apresentacao from './screens/Apresentacao'
-import Premissas from './screens/Premissas'
+import { useEffect, useMemo, useState } from 'react'
+import { BLOCOS, DESTINOS, NOMES_DESTINO, ORIGEM_CONFIG } from './config/regras.js'
+import { analisar, rotuloProcesso } from './lib/calculos.js'
+import { slug } from './lib/formato.js'
+import { situacaoBloco } from './lib/validacao.js'
+import { carregar, novoId, novoProcesso, salvar } from './lib/armazenamento.js'
+import Bloco from './screens/Bloco.jsx'
+import TelaDestino from './screens/TelaDestino.jsx'
+import Dashboard from './screens/Dashboard.jsx'
+import Processos from './screens/Processos.jsx'
 
-const TABS = [
-  { id: 'painel', label: 'Painel', icon: LayoutDashboard, Screen: Painel, primary: true },
-  { id: 'processo', label: 'Processo', icon: FileText, Screen: Processo, primary: true },
-  { id: 'tr', label: 'TR', icon: ClipboardList, Screen: TR, primary: true },
-  { id: 'margem', label: 'Margem', icon: Calculator, Screen: Margem, primary: true },
-  { id: 'simulador', label: 'Simulador de lances', short: 'Lances', icon: Gavel, Screen: Simulador },
-  { id: 'concorrentes', label: 'Concorrentes', icon: Users, Screen: Concorrentes },
-  { id: 'projecao', label: 'Projeção 10 anos', short: 'Projeção', icon: ChartLine, Screen: Projecao },
-  { id: 'apresentacao', label: 'Quadro do comitê', short: 'Comitê', icon: Presentation, Screen: Apresentacao },
-  { id: 'premissas', label: 'Premissas', icon: SlidersHorizontal, Screen: Premissas },
-]
+// Rotas por hash: #dashboard · #processos · #bloco-processo · #tela-cliente · #tela-margem · #agenda
+const rotaDeBloco = (b) => 'bloco-' + slug(b)
+const rotaDeDestino = (d) => (d === 'agenda' ? 'agenda' : 'tela-' + d)
+const lerRota = () => (typeof location !== 'undefined' ? location.hash.replace('#', '') : '') || 'dashboard'
+
+function ItemMenu({ r, rota, irPara, children, extra }) {
+  return (
+    <button type="button" className="nav-item" aria-current={rota === r ? 'page' : undefined} onClick={() => irPara(r)}>
+      <span className="rot">{children}</span>{extra}
+    </button>
+  )
+}
 
 export default function App() {
-  const store = useProcesses()
-  const [route, go] = useHashRoute()
-  const [moreOpen, setMoreOpen] = useState(false)
+  const [dados, setDados] = useState(carregar)
+  const [rota, setRota] = useState(lerRota)
+  const [menuAberto, setMenuAberto] = useState(false)
+  const [filtros, setFiltros] = useState({ uf: '', municipio: '' })
+  const [salvoOk, setSalvoOk] = useState(true)
 
-  const proc = route.id ? store.processes.find((p) => p.id === route.id) : null
-  const c = useMemo(() => (proc ? compute(proc) : null), [proc])
+  const processos = dados.processos
+  const atual = processos.find((p) => p.id === dados.atualId) || processos[0]
+  const analise = useMemo(() => (atual ? analisar(atual) : null), [atual])
 
-  if (!proc) {
-    return <Home store={store} go={go} missing={!!route.id} />
+  useEffect(() => { setSalvoOk(salvar(dados)) }, [dados])
+  useEffect(() => {
+    const f = () => { setRota(lerRota()); setMenuAberto(false) }
+    window.addEventListener('hashchange', f)
+    return () => window.removeEventListener('hashchange', f)
+  }, [])
+  useEffect(() => { window.scrollTo?.(0, 0) }, [rota, dados.atualId])
+
+  const irPara = (r) => {
+    const final = r.startsWith('bloco-') ? 'bloco-' + slug(r.slice(6)) : r
+    if (location.hash !== '#' + final) location.hash = final
+    setRota(final)
+    setMenuAberto(false)
   }
 
-  const tab = TABS.find((t) => t.id === route.tab) || TABS[0]
-  const Screen = tab.Screen
+  const mudarAtual = (fn) =>
+    setDados((d) => ({
+      ...d,
+      processos: d.processos.map((p) => (p.id === (d.atualId || d.processos[0]?.id) ? { ...fn(p), atualizadoEm: new Date().toISOString() } : p)),
+    }))
+  const alterarValor = (campoId, v) => mudarAtual((p) => ({ ...p, valores: { ...p.valores, [campoId]: v } }))
+  const alterarGrupo = (grupo, rows) => mudarAtual((p) => ({ ...p, grupos: { ...p.grupos, [grupo]: rows } }))
 
-  // API de edição repassada às telas
-  const set = (fn) => store.update(proc.id, fn)
-  const api = {
-    set,
-    // edição manual: aplica regras (data do comitê) e remove a indicação de fonte automática
-    setProcesso: (k, v) =>
-      set((p) => {
-        const fontes = { ...p.fontes }
-        delete fontes[k]
-        return { ...p, processo: patchProcesso(p.processo, { [k]: v }), fontes }
-      }),
-    patchProcesso: (patch, fontes = {}) => set((p) => ({ ...p, processo: patchProcesso(p.processo, patch), fontes: { ...p.fontes, ...fontes } })),
-    patch: (p, patch) => ({ ...p, processo: patchProcesso(p.processo, patch) }),
-    setPremissa: (k, v) => set((p) => ({ ...p, premissas: { ...p.premissas, [k]: v } })),
-    setField: (k, v) => set((p) => ({ ...p, [k]: v })),
-    listAdd: (list, item) => set((p) => ({ ...p, [list]: [...p[list], item] })),
-    listUpdate: (list, id, patch) => set((p) => ({ ...p, [list]: p[list].map((x) => (x.id === id ? { ...x, ...patch } : x)) })),
-    listRemove: (list, id) => set((p) => ({ ...p, [list]: p[list].filter((x) => x.id !== id) })),
-    listMove: (list, id, dir) =>
-      set((p) => {
-        const arr = [...p[list]]
-        const i = arr.findIndex((x) => x.id === id)
-        const j = i + dir
-        if (i < 0 || j < 0 || j >= arr.length) return p
-        ;[arr[i], arr[j]] = [arr[j], arr[i]]
-        return { ...p, [list]: arr }
-      }),
-    go: (t) => go(proc.id, t),
+  const selecionar = (id, r) => { setDados((d) => ({ ...d, atualId: id })); if (r) irPara(r) }
+  const criar = () => {
+    const p = novoProcesso(atual)
+    setDados((d) => ({ processos: [p, ...d.processos], atualId: p.id }))
+    irPara(rotaDeBloco(BLOCOS[0]))
+  }
+  const duplicar = (id) => {
+    const o = processos.find((p) => p.id === id)
+    const copia = JSON.parse(JSON.stringify(o))
+    Object.assign(copia, { id: novoId(), exemplo: false, criadoEm: new Date().toISOString() })
+    for (const g of Object.keys(copia.grupos || {})) copia.grupos[g] = copia.grupos[g].map((r) => ({ ...r, _id: novoId() }))
+    setDados((d) => ({ processos: [copia, ...d.processos], atualId: copia.id }))
+  }
+  const excluir = (id) =>
+    setDados((d) => {
+      const resto = d.processos.filter((p) => p.id !== id)
+      const lista = resto.length ? resto : [novoProcesso(d.processos.find((p) => p.id === id))]
+      return { processos: lista, atualId: d.atualId === id ? lista[0].id : d.atualId }
+    })
+  const importar = (lista) =>
+    setDados((d) => {
+      const ids = new Set(lista.map((p) => p.id))
+      return { processos: [...lista, ...d.processos.filter((p) => !ids.has(p.id))], atualId: lista[0]?.id || d.atualId }
+    })
+
+  // Tela atual
+  let tela = null
+  let titulo = 'Dashboard'
+  const blocoDaRota = BLOCOS.find((b) => rotaDeBloco(b) === rota)
+  const destinoDaRota = DESTINOS.find((d) => rotaDeDestino(d) === rota)
+  if (rota === 'processos') {
+    titulo = 'Processos'
+    tela = <Processos processos={processos} atualId={atual?.id} selecionar={(id) => selecionar(id, rotaDeBloco(BLOCOS[0]))} criar={criar} duplicar={duplicar} excluir={excluir} importar={importar} />
+  } else if (blocoDaRota && atual) {
+    titulo = blocoDaRota
+    tela = <Bloco key={atual.id + blocoDaRota} bloco={blocoDaRota} proc={atual} analise={analise} alterarValor={alterarValor} alterarGrupo={alterarGrupo} irPara={irPara} />
+  } else if (destinoDaRota && atual) {
+    titulo = destinoDaRota === 'agenda' ? 'Agenda' : 'Tela ' + (NOMES_DESTINO[destinoDaRota] || destinoDaRota)
+    tela = <TelaDestino destino={destinoDaRota} proc={atual} analise={analise} processos={processos} irPara={irPara} selecionar={(id) => selecionar(id)} />
+  } else {
+    tela = <Dashboard processos={processos} filtros={filtros} setFiltros={setFiltros} abrir={(id) => selecionar(id, 'tela-margem')} />
   }
 
-  const title = proc.processo.descritivo || 'Viabilidade sem descritivo'
-  const moreActive = !tab.primary
 
   return (
-    <div className="app">
-      <aside className="sidebar" aria-label="Seções">
-        <button className="side-back" onClick={() => go(null)}>
-          <ArrowLeft size={18} /> Todas as viabilidades
-        </button>
+    <div className={'app' + (menuAberto ? ' aberto' : '')}>
+      <aside className="side" aria-label="Menu">
+        <div className="side-brand">
+          <b>Viabilidade Licitações</b>
+          <span>Modelo Margem Médicos · serviços médicos</span>
+        </div>
+        <div className="side-proc">
+          <label htmlFor="sel-processo">Processo em edição</label>
+          <select id="sel-processo" value={atual?.id || ''} onChange={(e) => selecionar(e.target.value)}>
+            {processos.map((p) => <option key={p.id} value={p.id}>{rotuloProcesso(p)}</option>)}
+          </select>
+        </div>
         <nav>
-          {TABS.map((t) => (
-            <a key={t.id} href={`#/p/${proc.id}/${t.id}`} className={t.id === tab.id ? 'active' : ''} aria-current={t.id === tab.id ? 'page' : undefined}>
-              <t.icon size={18} aria-hidden="true" />
-              {t.label}
-            </a>
-          ))}
-        </nav>
-        <p className="side-foot">Os dados ficam salvos neste navegador. Exporte um backup na tela inicial.</p>
-      </aside>
-
-      <div className="main">
-        <header className="topbar">
-          <button className="icon-btn only-mobile" onClick={() => go(null)} aria-label="Voltar para a lista">
-            <ArrowLeft size={20} />
-          </button>
-          <div className="topbar-title">
-            <span className="topbar-proc" title={title}>{title}</span>
-            <span className="topbar-tab">{tab.label}</span>
+          <div className="nav-grupo">
+            <ItemMenu rota={rota} irPara={irPara} r="dashboard">Dashboard</ItemMenu>
+            <ItemMenu rota={rota} irPara={irPara} r="processos" extra={<span className="cnt">{processos.length}</span>}>Processos</ItemMenu>
           </div>
-          <Status kind={c.verdict.kind}>{c.verdict.title}</Status>
-        </header>
-
-        {store.saveError && <div className="banner-error">Não foi possível salvar no navegador. Exporte um backup para não perder os dados.</div>}
-
-        <main className="content">
-          <Screen p={proc} c={c} api={api} />
+          <div className="nav-grupo">
+            <span className="nav-titulo">Cadastro (abas do modelo)</span>
+            {BLOCOS.map((b) => {
+              const s = atual ? situacaoBloco(atual, analise, b) : null
+              const extra = s && <span className={'cnt ' + (s.erros ? 'err' : s.completo ? 'ok' : '')}>{s.erros ? `${s.erros} erro` : s.total ? `${s.ok}/${s.total}` : '—'}</span>
+              return <ItemMenu rota={rota} irPara={irPara} key={b} r={rotaDeBloco(b)} extra={extra}>{b}</ItemMenu>
+            })}
+          </div>
+          <div className="nav-grupo">
+            <span className="nav-titulo">Telas alimentadas (de/para)</span>
+            {DESTINOS.map((d) => (
+              <ItemMenu rota={rota} irPara={irPara} key={d} r={rotaDeDestino(d)} extra={<span className="seta">←</span>}>{d === 'agenda' ? 'Agenda' : 'Tela ' + (NOMES_DESTINO[d] || d)}</ItemMenu>
+            ))}
+          </div>
+        </nav>
+        <div style={{ marginTop: 'auto', padding: '12px 20px 18px', fontSize: '0.72rem', color: 'var(--side-ink-2)' }}>
+          Parâmetros: {ORIGEM_CONFIG}<br />
+          {salvoOk ? 'Salvo neste navegador' : 'Não foi possível salvar neste navegador'}
+        </div>
+      </aside>
+      <div className="veu" onClick={() => setMenuAberto(false)} />
+      <div className="main">
+        <div className="topo">
+          <button type="button" className="btn-menu" aria-label="Abrir menu" onClick={() => setMenuAberto(true)}>☰ Menu</button>
+          <b>{titulo}</b>
+        </div>
+        <main className="conteudo">
+          {atual && rota !== 'processos' && rota !== 'dashboard' && (
+            <div className="salvo">Processo: <b>{rotuloProcesso(atual)}</b>{atual.exemplo ? ' · exemplo com dados do PE 037/2026 FAMESP' : ''}</div>
+          )}
+          {tela}
         </main>
       </div>
-
-      <nav className="bottom-nav" aria-label="Seções">
-        {TABS.filter((t) => t.primary).map((t) => (
-          <a key={t.id} href={`#/p/${proc.id}/${t.id}`} className={t.id === tab.id ? 'active' : ''} aria-current={t.id === tab.id ? 'page' : undefined}>
-            <t.icon size={21} aria-hidden="true" />
-            <span>{t.short || t.label}</span>
-          </a>
-        ))}
-        <button className={moreActive ? 'active' : ''} onClick={() => setMoreOpen(true)}>
-          <Ellipsis size={21} aria-hidden="true" />
-          <span>{moreActive ? tab.short || tab.label : 'Mais'}</span>
-        </button>
-      </nav>
-
-      <Sheet open={moreOpen} onClose={() => setMoreOpen(false)} title="Mais seções">
-        <div className="more-list">
-          {TABS.filter((t) => !t.primary).map((t) => (
-            <a key={t.id} href={`#/p/${proc.id}/${t.id}`} onClick={() => setMoreOpen(false)} className={t.id === tab.id ? 'active' : ''}>
-              <t.icon size={20} aria-hidden="true" />
-              {t.label}
-            </a>
-          ))}
-        </div>
-      </Sheet>
     </div>
   )
 }

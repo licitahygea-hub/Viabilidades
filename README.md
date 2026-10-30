@@ -1,91 +1,66 @@
-# Viabilidade Médicos
+# Sistema de Viabilidade de Licitações (React + Vite)
 
-Sistema web (React + Vite) que reproduz a planilha **Viabilidade_Medicos_NOVO MODELO.xlsx**, feito para usar no celular e no computador.
+Sistema web responsivo (celular e computador) montado a partir da planilha
+`planilha/Parametros_Modelo_Viabilidade.xlsx`.
 
-## O que tem
-
-| Seção | Equivale à aba | O que faz |
-|---|---|---|
-| Painel | Painel | Veredito (viável / atenção / inviável), régua de margem, KPIs, limites da disputa, composição do faturamento, checklist do comitê, mercado |
-| Processo | Processo | Identificação, valores e prazos, regras do edital, equipe técnica, empresa atual, pesquisa de preço, comitê |
-| TR | TR | Quadro de itens com conversão de carga (h/dia, h/semana, plantões) e botão para levar os itens à Margem |
-| Margem | Margem | Itens (estimado, proposto, a pagar), custos indiretos, resultado consolidado e limites para a disputa |
-| Simulador de lances | Simulador de Lances | Tabela de descontos (passo e limite ajustáveis) e teste de um lance específico |
-| Concorrentes | Concorrentes | Ranking com valor mensal, desconto e a nossa margem em cada preço |
-| Projeção 10 anos | Projeção 10 anos | 12 meses e 10 anos com reajustes, detalhamento opcional de tributos e itens |
-| Quadro do comitê | TR Apresentação | Quadro pronto para copiar e colar no slide ou no Excel |
-| Premissas | Premissas | ISS, PIS, COFINS, CSLL, IR, reajustes e margem mínima |
-
-Os cálculos seguem as mesmas fórmulas da planilha (conferidos célula a célula com um cenário de teste).
-
-Cada viabilidade é um lote. Para outro lote do mesmo edital, use **Duplicar** na tela inicial.
-
-## Automações (sem custo, sem IA)
-
-- **Edital e anexos (Painel):** anexe PDF, DOCX, TXT ou ZIP. O texto é extraído no próprio navegador e um leitor por regras (`src/lib/extrator.js`) procura os dados do Processo: órgão, CNPJ, município/UF e capital, modalidade, número do edital e do processo, data e horário da sessão, critério de julgamento, modo de disputa, objeto, locais de execução, valor estimado, vigência, prorrogação, garantias, participação de cooperativas/consórcios/OS/OSCIP, subcontratação, EPI, alimentação, coordenação/RT, cursos (ACLS, ATLS, PALS…), RQE/título/pós-graduação e as especialidades citadas. Antes de aplicar você confere cada valor; depois, cada campo mostra a **fonte** (arquivo, página e trecho) e abre o documento na página. Campos não encontrados são listados para preenchimento manual. PDFs digitalizados (imagem, sem texto) não são lidos.
-- **Empresa atual (Processo):** a função `/api/empresa-atual` consulta os contratos publicados no PNCP pelo órgão (CNPJ) e pelos órgãos do município, escolhe os contratos de serviços médicos, prioriza os vigentes e completa porte, sede e sócio-administrador pela BrasilAPI (dados da Receita Federal). Há também atalhos de pesquisa para portal da transparência, tribunal de contas e diário oficial.
-- **Especialidades (Processo → Equipe técnica):** as 55 especialidades do CFM (Resolução CFM nº 2.380/2024), com “Com RQE” ou “Com Pós”, e opção de incluir especialidades próprias (ficam salvas no navegador).
-- **Comitê de precificação:** a data prevista é sugerida automaticamente na terça ou quinta anterior à data da disputa (ex.: disputa sexta 30/10/2026, comitê quinta 29/10/2026). Se você mudar a data à mão, ela deixa de ser recalculada; apague a data para voltar à sugestão.
-- **Enviar para precificação (fim da Margem):** monta o e-mail para licitacao@doccsc.com.br com o descritivo e a data do comitê. Sem configuração extra, abre o e-mail pronto no seu aplicativo de e-mail; com Resend configurado, envia direto.
-
-### Variáveis de ambiente (opcionais — Vercel → Settings → Environment Variables)
-
-| Variável | Para quê |
-|---|---|
-| `APP_ACCESS_KEY` | Senha simples que protege as funções do servidor. Se definir, informe a mesma em **Configurações** na tela inicial do app |
-| `RESEND_API_KEY` e `EMAIL_FROM` | Envio direto do e-mail de precificação (ex.: `EMAIL_FROM="Viabilidade <avisos@seudominio.com.br>"`, domínio verificado no Resend) |
-
-Depois de criar ou mudar variáveis, faça um novo deploy (Deployments → Redeploy). Se você tinha criado `ANTHROPIC_API_KEY`, pode apagá-la: não é mais usada.
-
-## Onde ficam os dados
-
-Os dados ficam salvos no navegador (localStorage) de cada aparelho, e os arquivos do edital no IndexedDB do mesmo navegador. Não há banco de dados nem login. O backup `.json` leva os dados, mas não os arquivos anexados.
-Use **Exportar tudo** para gerar um backup `.json` e **Importar backup** para restaurar ou levar para outro aparelho.
-
-## Rodar no computador
-
-Requer Node.js 20 ou superior.
+## Como rodar
 
 ```bash
 npm install
-npm run dev
+npm run dev          # abre em http://localhost:5173 (e na rede local, para testar no celular)
+npm run build        # gera a pasta dist/ para hospedar
+npm run build:arquivo-unico   # gera um único dist/index.html que abre direto no navegador
 ```
 
-Abra o endereço mostrado no terminal (normalmente http://localhost:5173).
+Requer Node.js 18 ou superior.
 
-`npm run dev` não executa as funções da pasta `api/` (busca da empresa atual e envio direto de e-mail). Para testá-las no computador, use a CLI da Vercel: `npm i -g vercel`, `vercel link` e `vercel dev`. A leitura do edital funciona normalmente com `npm run dev`.
+## Como a planilha vira o sistema
 
-## Publicar no GitHub
+| Coluna da planilha | Uso no sistema |
+|---|---|
+| **B** – Bloco (aba) | Itens do menu lateral, grupo "Cadastro" (Processo, TR, Premissas, Margem, Concorrentes) |
+| **C** – Seção | Quadros dentro de cada tela de cadastro |
+| **D** – Parâmetro | Campos a preencher |
+| **E** – Célula | Mostrada em cada campo (ex.: `Processo!C14`) para referência ao modelo Excel |
+| **F** – Vai pra onde | De/para: cada campo alimenta automaticamente a(s) tela(s) Cliente, Margem e/ou Agenda |
+| **G** – Tipo | Controle e validação do campo (texto, número, R$, %, data, hora, lista) |
+| **H** – Opções | Únicos valores aceitos nas listas |
+| **I** – Preenchimento | Obrigatório (marcado com *), Se houver, Opcional ou Fórmula padrão |
+| **K / L** – Exemplo / Observação | Texto de exemplo e ajuda abaixo do campo |
 
-```bash
-git init
-git add .
-git commit -m "Viabilidade médicos: primeira versão"
-git branch -M main
-git remote add origin https://github.com/SEU-USUARIO/viabilidade-medicos.git
-git push -u origin main
-```
+Quando o mesmo campo aparece em mais de uma linha com destinos diferentes (ex.: Data da sessão → margem
+e agenda), ele é preenchido uma vez só e enviado para todos os destinos.
 
-(Crie antes o repositório vazio `viabilidade-medicos` no GitHub.)
+A ordem do menu segue a lista "Bloco (aba)" da aba `Planilha1`.
 
-## Publicar na Vercel
+### Atualizar depois de editar a planilha
 
-1. Entre em https://vercel.com e clique em **Add New → Project**.
-2. Importe o repositório do GitHub.
-3. A Vercel detecta Vite sozinha (o `vercel.json` já define `npm run build` e a pasta `dist`). Clique em **Deploy**.
+1. Salve a planilha nova em `planilha/Parametros_Modelo_Viabilidade.xlsx` (ou passe o caminho).
+2. Rode `npm run config` (ou `npm run config -- caminho/da/planilha.xlsx`).
+3. O arquivo `src/config/parametros.json` é regenerado e o sistema passa a usar os novos campos.
 
-A cada `git push` na branch `main`, a Vercel publica a nova versão automaticamente.
+## Padronização das entradas
 
-No celular, abra o link e use **Adicionar à tela inicial** para ter um atalho com ícone.
+- Listas aceitam somente as opções da coluna H.
+- Município/UF: nome do município + UF escolhida numa lista das 27 UFs; a capital é preenchida automaticamente pela UF.
+- CNPJ: máscara e conferência dos dígitos verificadores.
+- Números, R$ e % no formato brasileiro (1.234,56); percentuais entre 0% e 100%.
+- "Qtd informada" aceita número ou conta simples (ex.: `=2920/12`).
+- "Valor unit. ESTIMADO" aceita valor em R$ ou a marcação Sigiloso.
+- Campos de fórmula padrão ficam em branco e mostram o valor automático (Qtd/mês = horas do TR;
+  Valor estimado global = estimado mensal × 12; Reajuste dos indiretos = IPCA).
 
-## Personalizar
+## Telas
 
-- Listas de opções (empresas, modalidades, status etc.): `src/lib/lists.js`
-- Premissas padrão (alíquotas, reajustes, margem mínima): `DEFAULT_PREMISSAS` em `src/lib/model.js`
-- Campos da aba Processo: `PROCESSO_SECTIONS` em `src/lib/model.js`
-- Fórmulas: `src/lib/calc.js`
-- Cores e layout: `src/styles.css`
-- Especialidades do CFM: `src/lib/especialidades.js`
-- Regras de leitura do edital (padrões procurados em cada campo): `src/lib/extrator.js`
-- Regra da data do comitê (terças e quintas): `src/lib/comite.js`
-- Texto do e-mail de precificação: `src/components/EnviarPrecificacao.jsx`
+- **Dashboard**: filtros de Estado e Município (vindos do cadastro de clientes) e, por especialidade:
+  data de abertura, especialidade, valor hora, valor global, margem e empresa arrematante
+  (o concorrente com status "Vencedor").
+- **Processos**: criar, abrir, duplicar, excluir, exportar e importar backup (.json).
+- **Cadastro**: uma tela por bloco da coluna B, com contador de obrigatórios no menu.
+- **Telas alimentadas**: Cliente, Margem (com a composição de preço, resultado e limites para a disputa,
+  pelas mesmas fórmulas do modelo Margem Médicos) e Agenda (sessões de todos os processos).
+
+Os dados ficam salvos no navegador (localStorage). Para compartilhar entre pessoas ou aparelhos,
+use Exportar/Importar backup ou ligue o sistema a um banco de dados (ponto de troca: `src/lib/armazenamento.js`).
+
+O processo de exemplo usa os dados reais do PE 037/2026 FAMESP (Botucatu/SP) e reproduz a margem de 7,32% da planilha.
