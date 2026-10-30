@@ -5,6 +5,9 @@ import { CAMPO } from '../lib/calculos.js'
 import { fmtMoeda, fmtNum, fmtPct } from '../lib/formato.js'
 import { situacaoBloco } from '../lib/validacao.js'
 import { novoId } from '../lib/armazenamento.js'
+import { CAMPOS_DO_CLIENTE, CAMPOS_DO_CLIENTE_IDS, municipioCliente, nomeCliente } from '../lib/clientes.js'
+import { RelatorioImportacao, SeletorModelo } from '../components/Importacao.jsx'
+import { BLOCOS_IMPORTADOS } from '../lib/importarExcel.js'
 
 const agrupar = (lista, chave) => {
   const m = new Map()
@@ -28,11 +31,13 @@ function BotaoExcluir({ onConfirmar, rotulo = 'Remover' }) {
   )
 }
 
-export default function Bloco({ bloco, proc, analise, alterarValor, alterarGrupo, irPara }) {
+export default function Bloco({ bloco, proc, analise, alterarValor, alterarGrupo, irPara, clientes, trocarCliente, editarCliente, reimportar }) {
   const campos = camposDoBloco(bloco)
+  const camposForm = campos.filter((c) => !CAMPOS_DO_CLIENTE_IDS.includes(c.id))
+  const [importacao, setImportacao] = useState(null)
   const sit = situacaoBloco(proc, analise, bloco)
   const destinos = [...new Set(campos.flatMap((c) => c.destinos))]
-  const secoes = agrupar(campos, (c) => c.secao)
+  const secoes = agrupar(camposForm, (c) => c.secao)
   const pct = sit.total ? Math.round((sit.ok / sit.total) * 100) : 100
 
   return (
@@ -55,6 +60,14 @@ export default function Bloco({ bloco, proc, analise, alterarValor, alterarGrupo
           {sit.erros > 0 && <span className="pill bad">{sit.erros} com erro</span>}
         </div>
       </header>
+
+      {bloco === 'Processo' && (
+        <ClienteVinculado proc={proc} clientes={clientes} trocarCliente={trocarCliente} editarCliente={editarCliente} />
+      )}
+
+      {BLOCOS_IMPORTADOS.includes(bloco) && (
+        <ImportarNoProcesso importacao={importacao} setImportacao={setImportacao} reimportar={reimportar} />
+      )}
 
       {sit.pend.length > 0 && (
         <div className="aviso">
@@ -156,5 +169,74 @@ function Grupo({ secao, grupo, campos, bloco, proc, analise, alterarGrupo }) {
         </div>
       </div>
     </section>
+  )
+}
+
+function ClienteVinculado({ proc, clientes, trocarCliente, editarCliente }) {
+  const [trocando, setTrocando] = useState(false)
+  const cli = clientes.find((c) => c.id === proc.clienteId)
+  return (
+    <section className="painel">
+      <div className="painel-cab">
+        <h2>Cliente</h2>
+        <span className="acoes">
+          {cli && <button type="button" className="btn peq" onClick={() => editarCliente(cli.id)}>Editar cliente</button>}
+          <button type="button" className="btn peq" onClick={() => setTrocando((x) => !x)}>{cli ? 'Trocar cliente' : 'Atribuir cliente'}</button>
+        </span>
+      </div>
+      <div className="painel-corpo">
+        {cli ? (
+          <dl className="dl">
+            <div><dt>Nome do cliente / órgão</dt><dd>{nomeCliente(cli)}</dd></div>
+            {CAMPOS_DO_CLIENTE.map((c) => {
+              const v = cli.valores?.[c.id]
+              return (
+                <div key={c.id}>
+                  <dt>{c.parametro} <span className="origem mono">· {c.bloco}!{c.celula}</span></dt>
+                  <dd className={v === undefined || v === '' ? 'vazio' : ''}>{v === undefined || v === '' ? 'não informado' : typeof v === 'number' ? fmtNum(v) : v}</dd>
+                </div>
+              )
+            })}
+          </dl>
+        ) : (
+          <div className="aviso">Esta viabilidade ainda não tem cliente. Município/UF e capital vêm do cadastro do cliente.</div>
+        )}
+        {trocando && (
+          <div className="campo" style={{ maxWidth: 480 }}>
+            <label htmlFor="trocar-cliente">Escolha o cliente</label>
+            <select id="trocar-cliente" value={proc.clienteId || ''} onChange={(e) => { if (e.target.value) { trocarCliente(e.target.value); setTrocando(false) } }}>
+              <option value="">Selecione…</option>
+              {[...clientes].sort((a, b) => nomeCliente(a).localeCompare(nomeCliente(b), 'pt-BR')).map((c) => (
+                <option key={c.id} value={c.id}>{nomeCliente(c)} — {municipioCliente(c) || 'sem município'}</option>
+              ))}
+            </select>
+            <span className="ajuda">Para um cliente novo, cadastre-o em Clientes e volte aqui.</span>
+          </div>
+        )}
+      </div>
+    </section>
+  )
+}
+
+function ImportarNoProcesso({ importacao, setImportacao, reimportar }) {
+  const [aberto, setAberto] = useState(false)
+  if (importacao) {
+    return (
+      <section className="painel">
+        <div className="painel-cab"><h2>Importação do modelo</h2><button type="button" className="link" onClick={() => setImportacao(null)}>Fechar</button></div>
+        <div className="painel-corpo"><RelatorioImportacao rel={importacao.relatorio} arquivo={importacao.arquivo} /></div>
+      </section>
+    )
+  }
+  return aberto ? (
+    <section className="painel">
+      <div className="painel-cab"><h2>Importar modelo de viabilidade preenchido</h2><button type="button" className="link" onClick={() => setAberto(false)}>Cancelar</button></div>
+      <div className="painel-corpo">
+        <div className="aviso">A importação substitui os dados de Processo, TR, Premissas e Margem desta viabilidade. Cliente e concorrentes são mantidos.</div>
+        <SeletorModelo id="reimportar-arquivo" onImportar={async (buf, nome) => { const relatorio = await reimportar(buf); setImportacao({ relatorio, arquivo: nome }); setAberto(false) }} />
+      </div>
+    </section>
+  ) : (
+    <div><button type="button" className="btn" onClick={() => setAberto(true)}>Importar modelo de viabilidade (.xlsx)</button></div>
   )
 }

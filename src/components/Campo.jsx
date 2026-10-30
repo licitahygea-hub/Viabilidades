@@ -104,7 +104,7 @@ export default function Campo({ campo, valor, padrao, onChange, id, largo }) {
         <label htmlFor={id}>{campo.parametro}{OBRIG(campo) && <span className="req" title="Obrigatório"> *</span>}</label>
       </div>
       <div className="meta">
-        <span className="chip cel" title="Célula no modelo Excel">{campo.bloco}!{campo.celula}</span>
+        {campo.celula && <span className="chip cel" title="Célula no modelo Excel">{campo.bloco}!{campo.celula}</span>}
         {FORMULA(campo) && <span className="chip">fórmula padrão</span>}
         {!OBRIG(campo) && !FORMULA(campo) && <span className="chip">{campo.preenchimento.toLowerCase()}</span>}
         {campo.destinos.map((d) => <span key={d} className="chip dest" title="Tela alimentada por este campo">→ {NOMES_DESTINO[d] || d}</span>)}

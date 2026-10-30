@@ -44,7 +44,7 @@ export default function Processos({ processos, atualId, selecionar, criar, dupli
           <p>Cada processo é uma licitação com os dados das abas do modelo. Os dados ficam salvos neste navegador.</p>
         </div>
         <div className="acoes">
-          <button type="button" className="btn pri" onClick={criar}>+ Novo processo</button>
+          <button type="button" className="btn pri" onClick={criar}>+ Nova viabilidade</button>
           <button type="button" className="btn" onClick={exportar}>Exportar backup</button>
           <button type="button" className="btn" onClick={() => arquivo.current?.click()}>Importar backup</button>
           <input ref={arquivo} id="importar-backup" type="file" accept="application/json,.json" hidden onChange={lerArquivo} />
@@ -65,6 +65,7 @@ export default function Processos({ processos, atualId, selecionar, criar, dupli
                 {p.exemplo && <span className="pill neutro">Exemplo</span>}
               </div>
               <h3>{rotuloProcesso(p)}</h3>
+              <span className="origem">{p.clienteNome ? 'Cliente: ' + p.clienteNome : 'Sem cliente atribuído'}</span>
               <div className="par"><span>Valor global</span><b>{fmtMoeda(a.valorGlobal)}</b></div>
               <div className="par"><span>Margem</span><b>{fmtPct(a.margem)}</b></div>
               <div className="par"><span>Obrigatórios</span><b>{ok}/{tot}</b></div>

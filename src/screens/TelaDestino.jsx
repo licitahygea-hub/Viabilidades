@@ -1,6 +1,7 @@
 import { NOMES_DESTINO, camposDoDestino, tipoDe } from '../config/regras.js'
 import { CAMPO, analisar, efetivo, linhas, rotuloProcesso, valor } from '../lib/calculos.js'
 import { avaliarExpressao, fmtData, fmtMoeda, fmtNum, fmtPct, vazio } from '../lib/formato.js'
+import { cidadeCliente, nomeCliente, ufCliente } from '../lib/clientes.js'
 
 export function fmtValor(campo, v) {
   if (vazio(v)) return null
@@ -18,7 +19,7 @@ export function fmtValor(campo, v) {
 const classeSituacao = { Viável: 'ok', Atenção: 'warn', Inviável: 'bad', 'Sem dados': 'neutro' }
 const classeStatus = (s) => (s === 'Acima do mínimo' ? 'ok' : s === 'Prejuízo' ? 'bad' : s === 'Abaixo do mínimo' ? 'warn' : 'neutro')
 
-export default function TelaDestino({ destino, proc, analise, processos, irPara, selecionar }) {
+export default function TelaDestino({ destino, proc, analise, processos, clientes = [], irPara, selecionar }) {
   const campos = camposDoDestino(destino)
   const origens = [...new Set(campos.map((c) => c.bloco))]
   const porBloco = origens.map((b) => [b, campos.filter((c) => c.bloco === b)])
@@ -36,7 +37,7 @@ export default function TelaDestino({ destino, proc, analise, processos, irPara,
 
       {destino === 'margem' && <ResumoMargem a={analise} />}
       {destino === 'agenda' && <AgendaGeral processos={processos} atualId={proc.id} selecionar={selecionar} />}
-      {destino === 'cliente' && <ClientesCadastrados processos={processos} />}
+      {destino === 'cliente' && <ClientesCadastrados processos={processos} clientes={clientes} atual={proc} irPara={irPara} />}
 
       {porBloco.map(([bloco, cs]) => {
         const simples = cs.filter((c) => !c.repete)
@@ -195,28 +196,29 @@ function AgendaGeral({ processos, atualId, selecionar }) {
   )
 }
 
-function ClientesCadastrados({ processos }) {
-  const mapa = new Map()
-  for (const p of processos) {
-    const a = analisar(p)
-    if (!a.municipio) continue
-    const k = `${a.municipio}/${a.uf}`
-    const atual = mapa.get(k) || { municipio: a.municipio, uf: a.uf, n: 0, global: 0 }
-    atual.n++
-    atual.global += a.valorGlobal
-    mapa.set(k, atual)
-  }
-  const lista = [...mapa.values()].sort((x, y) => x.uf.localeCompare(y.uf) || x.municipio.localeCompare(y.municipio, 'pt-BR'))
+function ClientesCadastrados({ processos, clientes, atual, irPara }) {
+  const lista = [...clientes].sort((x, y) => ufCliente(x).localeCompare(ufCliente(y)) || nomeCliente(x).localeCompare(nomeCliente(y), 'pt-BR'))
   return (
     <section className="painel">
-      <div className="painel-cab"><h2>Clientes cadastrados</h2><small>base dos filtros de estado e município do dashboard</small></div>
+      <div className="painel-cab"><h2>Clientes cadastrados</h2><button type="button" className="link" onClick={() => irPara('clientes')}>Gerenciar clientes</button></div>
       {lista.length === 0 ? (
-        <div className="vazio-estado">Nenhum município informado ainda. Preencha Município/UF em Processo.</div>
+        <div className="vazio-estado">Nenhum cliente cadastrado.</div>
       ) : (
         <div className="tabela-wrap" style={{ border: 0, borderRadius: 0 }}>
           <table className="tab">
-            <thead><tr><th>UF</th><th>Município</th><th className="n">Processos</th><th className="n">Valor global</th></tr></thead>
-            <tbody>{lista.map((c) => <tr key={c.municipio + c.uf}><td>{c.uf}</td><td>{c.municipio}</td><td className="n">{c.n}</td><td className="n">{fmtMoeda(c.global)}</td></tr>)}</tbody>
+            <thead><tr><th>Cliente</th><th>UF</th><th>Município</th><th className="n">Viabilidades</th><th className="n">Valor global</th></tr></thead>
+            <tbody>
+              {lista.map((c) => {
+                const procs = processos.filter((p) => p.clienteId === c.id)
+                const global = procs.reduce((s, p) => s + analisar(p).valorGlobal, 0)
+                return (
+                  <tr key={c.id} style={atual?.clienteId === c.id ? { boxShadow: 'inset 3px 0 0 var(--accent)' } : undefined}>
+                    <td>{nomeCliente(c)}</td><td>{ufCliente(c) || '—'}</td><td>{cidadeCliente(c) || '—'}</td>
+                    <td className="n">{procs.length}</td><td className="n">{fmtMoeda(global)}</td>
+                  </tr>
+                )
+              })}
+            </tbody>
           </table>
         </div>
       )}

@@ -1,15 +1,16 @@
 import { useMemo } from 'react'
 import { analisar, rotuloProcesso, valor, CAMPO } from '../lib/calculos.js'
 import { fmtData, fmtMoeda, fmtMoedaCurta, fmtPct } from '../lib/formato.js'
+import { cidadeCliente, ufCliente } from '../lib/clientes.js'
 
 const corMargem = (m, min) => (m === null ? 'var(--ink-3)' : m < 0 ? 'var(--bad)' : m < min ? 'var(--warn)' : 'var(--ok)')
 
-export default function Dashboard({ processos, filtros, setFiltros, abrir }) {
+export default function Dashboard({ processos, clientes = [], filtros, setFiltros, abrir }) {
   const base = useMemo(() => processos.map((p) => ({ p, a: analisar(p), data: valor(p, CAMPO.data) || '' })), [processos])
 
-  // Opções dos filtros vêm do cadastro de clientes (Município/UF da tela Cliente)
-  const ufs = [...new Set(base.map((b) => b.a.uf).filter(Boolean))].sort()
-  const municipios = [...new Set(base.filter((b) => !filtros.uf || b.a.uf === filtros.uf).map((b) => b.a.municipio).filter(Boolean))]
+  // Opções dos filtros vêm do cadastro de clientes
+  const ufs = [...new Set(clientes.map(ufCliente).filter(Boolean))].sort()
+  const municipios = [...new Set(clientes.filter((c) => !filtros.uf || ufCliente(c) === filtros.uf).map(cidadeCliente).filter(Boolean))]
     .sort((x, y) => x.localeCompare(y, 'pt-BR'))
 
   const filtrados = base.filter((b) => (!filtros.uf || b.a.uf === filtros.uf) && (!filtros.municipio || b.a.municipio === filtros.municipio))
@@ -83,7 +84,7 @@ export default function Dashboard({ processos, filtros, setFiltros, abrir }) {
                 {linhas.map((l) => (
                   <tr key={l.chave} className="clicavel" onClick={() => abrir(l.p.id)}>
                     <td className="n">{fmtData(l.data)}</td>
-                    <td>{l.a.municipio ? `${l.a.municipio}/${l.a.uf}` : '—'}</td>
+                    <td>{l.a.municipio ? `${l.a.municipio}/${l.a.uf}` : '—'}{l.p.clienteNome && <div className="origem">{l.p.clienteNome}</div>}</td>
                     <td>{l.especialidade}</td>
                     <td className="n">{fmtMoeda(l.valorHora)}</td>
                     <td className="n">{fmtMoeda(l.valorGlobal)}</td>
@@ -99,6 +100,7 @@ export default function Dashboard({ processos, filtros, setFiltros, abrir }) {
               <button type="button" key={l.chave} className="cartao" style={{ textAlign: 'left', cursor: 'pointer' }} onClick={() => abrir(l.p.id)}>
                 <div className="linha-info"><span className="num">{fmtData(l.data)}</span><span>{l.a.municipio ? `${l.a.municipio}/${l.a.uf}` : '—'}</span></div>
                 <h3>{l.especialidade}</h3>
+                {l.p.clienteNome && <span className="origem">{l.p.clienteNome}</span>}
                 <div className="par"><span>Valor hora</span><b>{fmtMoeda(l.valorHora)}</b></div>
                 <div className="par"><span>Valor global</span><b>{fmtMoeda(l.valorGlobal)}</b></div>
                 <div className="par"><span>Margem</span><BarraMargem m={l.margem} min={l.a.margemMin} /></div>

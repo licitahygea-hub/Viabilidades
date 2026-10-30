@@ -1,6 +1,7 @@
 // Persistência local (navegador) + processo de exemplo
 import { CAMPOS, acharCampo } from '../config/regras.js'
 import { grupoConcorrentes, grupoItens } from './calculos.js'
+import { CAMPO_NOME, CAMPOS_DO_CLIENTE, aplicarCliente, finalizarCliente } from './clientes.js'
 
 const CHAVE = 'viabilidade.processos.v1'
 
@@ -11,10 +12,40 @@ export function carregar() {
     const bruto = localStorage.getItem(CHAVE)
     if (bruto) {
       const dados = JSON.parse(bruto)
-      if (Array.isArray(dados?.processos)) return dados
+      if (Array.isArray(dados?.processos)) return migrar(dados)
     }
   } catch { /* navegador sem armazenamento: segue com o exemplo */ }
-  return { processos: [processoExemplo()], atualId: null }
+  const cliente = clienteExemplo()
+  return { clientes: [cliente], processos: [aplicarCliente(processoExemplo(), cliente)], atualId: null }
+}
+
+// Dados salvos antes do cadastro de clientes: cria um cliente por município já usado
+export function migrar(dados) {
+  const clientes = Array.isArray(dados.clientes) ? [...dados.clientes] : []
+  const processos = dados.processos.map((p) => {
+    if (p.clienteId && clientes.some((c) => c.id === p.clienteId)) return p
+    const mun = CAMPOS_DO_CLIENTE.find((c) => c.especial === 'municipio-uf')
+    const local = mun ? p.valores?.[mun.id] : ''
+    if (!local) return p
+    let cli = clientes.find((c) => mun && c.valores?.[mun.id] === local)
+    if (!cli) {
+      const valores = { [CAMPO_NOME.id]: p.exemplo ? NOME_EXEMPLO : local }
+      for (const c of CAMPOS_DO_CLIENTE) if (p.valores?.[c.id] !== undefined) valores[c.id] = p.valores[c.id]
+      cli = { id: novoId(), criadoEm: new Date().toISOString(), valores: finalizarCliente(valores) }
+      clientes.push(cli)
+    }
+    return aplicarCliente(p, cli)
+  })
+  return { ...dados, clientes, processos }
+}
+
+const NOME_EXEMPLO = 'FAMESP — Hospital das Clínicas da Faculdade de Medicina de Botucatu (HCFMB)'
+
+export function clienteExemplo() {
+  const valores = { [CAMPO_NOME.id]: NOME_EXEMPLO }
+  const mun = CAMPOS_DO_CLIENTE.find((c) => c.especial === 'municipio-uf')
+  if (mun) valores[mun.id] = 'Botucatu/SP'
+  return { id: novoId(), exemplo: true, criadoEm: new Date().toISOString(), valores: finalizarCliente(valores) }
 }
 
 export function salvar(dados) {

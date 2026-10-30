@@ -39,6 +39,29 @@ A ordem do menu segue a lista "Bloco (aba)" da aba `Planilha1`.
 2. Rode `npm run config` (ou `npm run config -- caminho/da/planilha.xlsx`).
 3. O arquivo `src/config/parametros.json` é regenerado e o sistema passa a usar os novos campos.
 
+## Nova viabilidade
+
+1. **+ Nova viabilidade** (menu lateral, Processos ou Clientes) pergunta a qual cliente a viabilidade pertence.
+   - Com clientes cadastrados: escolha na lista (com busca) ou cadastre um novo.
+   - Sem nenhum cliente: abre direto o cadastro de cliente; ao salvar, a viabilidade continua para ele.
+2. Escolha como preencher:
+   - **Importar o modelo de viabilidade preenchido (.xlsx)**: lê as abas Processo, TR, Premissas e Margem
+     nas células indicadas na coluna E da planilha de parâmetros e preenche os mesmos campos do sistema.
+     Itens de TR e Margem são lidos da linha 6 para baixo até a linha de TOTAL.
+     Células com fórmula nos campos de "fórmula padrão" ficam automáticas; valores fora do padrão
+     (ex.: opção que não existe na lista) ficam em branco e são listados no resumo da importação.
+     Município/UF e capital sempre vêm do cadastro do cliente (há aviso se a planilha disser outra coisa).
+   - **Começar em branco**: só as premissas da empresa vêm preenchidas.
+
+Numa viabilidade já existente, o botão **Importar modelo de viabilidade (.xlsx)** nas telas
+Processo, TR, Premissas e Margem substitui esses quatro blocos pelos dados da planilha (cliente e concorrentes são mantidos).
+
+## Clientes
+
+Cadastro com nome do órgão, CNPJ (opcional) e os campos de localização do bloco Processo que vão para a
+tela Cliente (Município/UF, capital, distância da capital). Ao editar um cliente, todas as viabilidades dele
+são atualizadas. Os filtros de Estado e Município do dashboard usam esse cadastro.
+
 ## Padronização das entradas
 
 - Listas aceitam somente as opções da coluna H.

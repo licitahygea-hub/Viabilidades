@@ -172,7 +172,7 @@ export function efetivo(proc, analise, campo, linha) {
 }
 
 export function rotuloProcesso(proc) {
-  const m = valor(proc, F.municipio) || 'Novo processo'
+  const m = valor(proc, F.municipio) || proc.clienteNome || 'Novo processo'
   const e = valor(proc, F.edital)
   return e ? `${m} · ${String(e).split('·')[0].trim()}` : m
 }
